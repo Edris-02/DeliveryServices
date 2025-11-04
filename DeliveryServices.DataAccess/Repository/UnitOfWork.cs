@@ -12,11 +12,19 @@ namespace DeliveryServices.DataAccess.Repository
     {
         private readonly ApplicationDbContext _context;
         public IMerchantRepository Merchants { get; private set; }
+        public IProductRepository Products { get; private set; }
+        public IOrderRepository Orders { get; private set; }
+        public IOrderItemRepository OrderItems { get; private set; }
+        public IDeliveryRouteRepository DeliveryRoutes { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Merchants = new MerchantRepository(_context);
+            Products = new ProductRepository(_context);
+            Orders = new OrderRepository(_context);
+            OrderItems = new OrderItemRepository(_context);
+            DeliveryRoutes = new DeliveryRouteRepository(_context);
         }
         public void SaveChanges()
         {

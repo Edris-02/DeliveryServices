@@ -27,6 +27,9 @@ namespace DeliveryServices.Models
         [StringLength(250)]
         public string Address { get; set; }
 
+        // Navigation: a merchant can have many products
+        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+
         //public virtual ICollection<Package> Packages { get; set; } = new List<Package>();
     }
 }
