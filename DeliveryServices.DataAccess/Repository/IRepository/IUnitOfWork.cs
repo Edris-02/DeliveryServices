@@ -11,7 +11,6 @@ namespace DeliveryServices.DataAccess.Repository.IRepository
         IMerchantRepository Merchant { get; }
         IOrderItemRepository OrderItem { get; }
         IOrderRepository Order { get; }
-        IDeliveryRouteRepository DeliveryRoute { get; }
         IMerchantPayoutRepository MerchantPayout { get; }
         void Save();
     }

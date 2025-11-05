@@ -28,10 +28,6 @@ namespace DeliveryServices.Models
 
         public OrderStatus Status { get; set; } = OrderStatus.Pending;
 
-        // Link to Delivery Route (optional - order may not be assigned to a route yet)
-        public int? DeliveryRouteId { get; set; }
-        public virtual DeliveryRoutes? DeliveryRoute { get; set; }
-
         // Link to Merchant (who is selling the products)
         public int? MerchantId { get; set; }
         public virtual Merchants? Merchant { get; set; }

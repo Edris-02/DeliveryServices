@@ -22,45 +22,6 @@ namespace DeliveryServices.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DeliveryServices.Models.DeliveryRoutes", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CourierName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("RouteName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("ScheduledAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("StartedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DeliveryRoutes");
-                });
-
             modelBuilder.Entity("DeliveryServices.Models.MerchantPayouts", b =>
                 {
                     b.Property<int>("Id")
@@ -204,9 +165,6 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.Property<decimal>("DeliveryFee")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int?>("DeliveryRouteId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MerchantId")
                         .HasColumnType("int");
 
@@ -214,8 +172,6 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DeliveryRouteId");
 
                     b.HasIndex("MerchantId");
 
@@ -444,15 +400,9 @@ namespace DeliveryServices.DataAccess.Migrations
 
             modelBuilder.Entity("DeliveryServices.Models.Orders", b =>
                 {
-                    b.HasOne("DeliveryServices.Models.DeliveryRoutes", "DeliveryRoute")
-                        .WithMany("Orders")
-                        .HasForeignKey("DeliveryRouteId");
-
                     b.HasOne("DeliveryServices.Models.Merchants", "Merchant")
                         .WithMany("Orders")
                         .HasForeignKey("MerchantId");
-
-                    b.Navigation("DeliveryRoute");
 
                     b.Navigation("Merchant");
                 });
@@ -506,11 +456,6 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("DeliveryServices.Models.DeliveryRoutes", b =>
-                {
-                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("DeliveryServices.Models.Merchants", b =>

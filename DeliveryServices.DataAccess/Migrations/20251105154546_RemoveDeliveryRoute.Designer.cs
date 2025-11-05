@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeliveryServices.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251105140816_AddDeliveryRoutes")]
-    partial class AddDeliveryRoutes
+    [Migration("20251105154546_RemoveDeliveryRoute")]
+    partial class RemoveDeliveryRoute
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace DeliveryServices.DataAccess.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("DeliveryServices.Models.DeliveryRoutes", b =>
+            modelBuilder.Entity("DeliveryServices.Models.MerchantPayouts", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,20 +33,32 @@ namespace DeliveryServices.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CourierName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("RouteName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("MerchantId")
+                        .HasColumnType("int");
 
-                    b.Property<DateTime>("ScheduledAt")
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("PaidAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("PaymentMethod")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ProcessedBy")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeliveryRoutes");
+                    b.HasIndex("MerchantId");
+
+                    b.ToTable("MerchantPayouts");
                 });
 
             modelBuilder.Entity("DeliveryServices.Models.Merchants", b =>
@@ -62,6 +74,9 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
+                    b.Property<decimal>("CurrentBalance")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -75,6 +90,9 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("TotalPaidOut")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -93,7 +111,6 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ProductDescription")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
@@ -148,7 +165,10 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DeliveryRoutesId")
+                    b.Property<decimal>("DeliveryFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("MerchantId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -156,7 +176,7 @@ namespace DeliveryServices.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeliveryRoutesId");
+                    b.HasIndex("MerchantId");
 
                     b.ToTable("Orders");
                 });
@@ -359,6 +379,17 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DeliveryServices.Models.MerchantPayouts", b =>
+                {
+                    b.HasOne("DeliveryServices.Models.Merchants", "Merchant")
+                        .WithMany("Payouts")
+                        .HasForeignKey("MerchantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Merchant");
+                });
+
             modelBuilder.Entity("DeliveryServices.Models.OrderItems", b =>
                 {
                     b.HasOne("DeliveryServices.Models.Orders", "Order")
@@ -372,9 +403,11 @@ namespace DeliveryServices.DataAccess.Migrations
 
             modelBuilder.Entity("DeliveryServices.Models.Orders", b =>
                 {
-                    b.HasOne("DeliveryServices.Models.DeliveryRoutes", null)
+                    b.HasOne("DeliveryServices.Models.Merchants", "Merchant")
                         .WithMany("Orders")
-                        .HasForeignKey("DeliveryRoutesId");
+                        .HasForeignKey("MerchantId");
+
+                    b.Navigation("Merchant");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -428,9 +461,11 @@ namespace DeliveryServices.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DeliveryServices.Models.DeliveryRoutes", b =>
+            modelBuilder.Entity("DeliveryServices.Models.Merchants", b =>
                 {
                     b.Navigation("Orders");
+
+                    b.Navigation("Payouts");
                 });
 
             modelBuilder.Entity("DeliveryServices.Models.Orders", b =>

@@ -60,7 +60,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         {
             // Remove validation errors for navigation properties
             ModelState.Remove("Merchant");
-            ModelState.Remove("DeliveryRoute");
             ModelState.Remove("Items");
 
             if (!ModelState.IsValid)
@@ -78,7 +77,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             // Ensure Items collection is initialized
             order.Items ??= new List<OrderItems>();
             order.Merchant = null; // Clear navigation property
-            order.DeliveryRoute = null; // Clear navigation property
 
             _unitOfWork.Order.Add(order);
             _unitOfWork.Save();
@@ -115,7 +113,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         {
             // Remove validation errors for navigation properties
             ModelState.Remove("Merchant");
-            ModelState.Remove("DeliveryRoute");
             ModelState.Remove("Items");
 
             if (!ModelState.IsValid)
@@ -131,8 +128,36 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return View(order);
             }
 
+            // Get the original order to check if merchant changed
+            var originalOrder = _unitOfWork.Order.Get(o => o.Id == order.Id, includeProperties: "Items");
+            
+            // If order is delivered and merchant changed, update balances
+            if (order.Status == OrderStatus.Delivered && originalOrder.MerchantId != order.MerchantId)
+            {
+                // Remove from old merchant balance
+                if (originalOrder.MerchantId.HasValue)
+                {
+                    var oldMerchant = _unitOfWork.Merchant.Get(m => m.Id == originalOrder.MerchantId.Value, tracked: true);
+                    if (oldMerchant != null)
+                    {
+                        oldMerchant.CurrentBalance -= originalOrder.SubTotal;
+                        _unitOfWork.Merchant.Update(oldMerchant);
+                    }
+                }
+
+                // Add to new merchant balance
+                if (order.MerchantId.HasValue)
+                {
+                    var newMerchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                    if (newMerchant != null)
+                    {
+                        newMerchant.CurrentBalance += order.SubTotal;
+                        _unitOfWork.Merchant.Update(newMerchant);
+                    }
+                }
+            }
+
             order.Merchant = null; // Clear navigation property
-            order.DeliveryRoute = null; // Clear navigation property
 
             _unitOfWork.Order.Update(order);
             _unitOfWork.Save();
@@ -208,11 +233,14 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Details), new { id = orderId });
             }
 
-            var order = _unitOfWork.Order.Get(o => o.Id == orderId, tracked: true);
+            var order = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items", tracked: true);
             if (order == null)
             {
                 return NotFound();
             }
+
+            // Store the old subtotal before adding item
+            var oldSubTotal = order.SubTotal;
 
             var item = new OrderItems
             {
@@ -226,6 +254,23 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
             _unitOfWork.OrderItem.Add(item);
             _unitOfWork.Save();
+
+            // If order is already delivered, update merchant balance
+            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue)
+            {
+                // Reload order to get updated SubTotal with new item
+                var updatedOrder = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items");
+                var newSubTotal = updatedOrder.SubTotal;
+                var difference = newSubTotal - oldSubTotal;
+
+                var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                if (merchant != null)
+                {
+                    merchant.CurrentBalance += difference;
+                    _unitOfWork.Merchant.Update(merchant);
+                    _unitOfWork.Save();
+                }
+            }
 
             TempData["success"] = "Item added to order";
             return RedirectToAction(nameof(Details), new { id = orderId });
@@ -249,20 +294,45 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Details), new { id = orderId });
             }
 
+            var order = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items");
+            if (order == null)
+            {
+                return NotFound();
+            }
+
             var item = _unitOfWork.OrderItem.Get(oi => oi.Id == itemId && oi.OrderId == orderId, tracked: true);
             if (item == null)
             {
                 return NotFound();
             }
 
+            // Store old item value
+            var oldItemValue = item.Quantity * item.UnitPrice;
+
+            // Update item
             item.ProductName = productName.Trim();
             item.ProductSKU = string.IsNullOrWhiteSpace(productSKU) ? null : productSKU.Trim();
             item.ProductDescription = string.IsNullOrWhiteSpace(productDescription) ? null : productDescription.Trim();
             item.Quantity = quantity;
             item.UnitPrice = unitPrice;
 
+            var newItemValue = item.Quantity * item.UnitPrice;
+            var difference = newItemValue - oldItemValue;
+
             _unitOfWork.OrderItem.Update(item);
             _unitOfWork.Save();
+
+            // If order is already delivered, update merchant balance
+            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue && difference != 0)
+            {
+                var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                if (merchant != null)
+                {
+                    merchant.CurrentBalance += difference;
+                    _unitOfWork.Merchant.Update(merchant);
+                    _unitOfWork.Save();
+                }
+            }
 
             TempData["success"] = "Item updated";
             return RedirectToAction(nameof(Details), new { id = orderId });
@@ -273,14 +343,35 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RemoveItem(int orderId, int itemId)
         {
+            var order = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items");
+            if (order == null)
+            {
+                return NotFound();
+            }
+
             var item = _unitOfWork.OrderItem.Get(oi => oi.Id == itemId && oi.OrderId == orderId);
             if (item == null)
             {
                 return NotFound();
             }
 
+            // Store the item value before removing
+            var itemValue = item.Quantity * item.UnitPrice;
+
             _unitOfWork.OrderItem.Remove(item);
             _unitOfWork.Save();
+
+            // If order is already delivered, update merchant balance
+            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue)
+            {
+                var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                if (merchant != null)
+                {
+                    merchant.CurrentBalance -= itemValue;
+                    _unitOfWork.Merchant.Update(merchant);
+                    _unitOfWork.Save();
+                }
+            }
 
             TempData["success"] = "Item removed from order";
             return RedirectToAction(nameof(Details), new { id = orderId });

@@ -14,7 +14,6 @@ namespace DeliveryServices.DataAccess.Data
         public DbSet<Merchants> Merchants { get; set; }
         public DbSet<OrderItems> OrderItems { get; set; }
         public DbSet<Orders> Orders { get; set; }
-        public DbSet<DeliveryRoutes> DeliveryRoutes { get; set; }
         public DbSet<MerchantPayouts> MerchantPayouts { get; set; }
     }
 }

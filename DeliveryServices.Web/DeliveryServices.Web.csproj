@@ -26,4 +26,8 @@
     <ProjectReference Include="..\DeliveryServices.Models\DeliveryServices.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Views\DeliveryRoutes\" />
+  </ItemGroup>
+
 </Project>
