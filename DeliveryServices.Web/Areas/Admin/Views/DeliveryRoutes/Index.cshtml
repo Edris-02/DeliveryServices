@@ -1,0 +1,105 @@
+@model IEnumerable<DeliveryServices.Models.DeliveryRoutes>
+@{
+    ViewData["Title"] = "Delivery Routes";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Delivery Routes</h2>
+            <p class="text-secondary mb-0">Manage and schedule delivery routes</p>
+        </div>
+        <a href="@Url.Action("Create", "DeliveryRoutes", new { area = "Admin" })" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> New Route
+        </a>
+    </div>
+}
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle"></i> @TempData["success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Route Name</th>
+                            <th>Courier</th>
+                            <th>Status</th>
+                            <th>Scheduled At</th>
+                            <th>Orders</th>
+                            <th>Total Revenue</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var r in Model)
+                        {
+                            var statusBadge = r.Status switch
+                            {
+                                DeliveryServices.Models.RouteStatus.Planned => "bg-secondary",
+                                DeliveryServices.Models.RouteStatus.InProgress => "bg-primary",
+                                DeliveryServices.Models.RouteStatus.Completed => "bg-success",
+                                DeliveryServices.Models.RouteStatus.Cancelled => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+                            
+                            <tr>
+                                <td><strong>#@r.Id</strong></td>
+                                <td><strong>@r.RouteName</strong></td>
+                                <td>@r.CourierName</td>
+                                <td><span class="badge @statusBadge">@r.Status</span></td>
+                                <td class="text-secondary small">
+                                    @r.ScheduledAt.ToString("MMM dd, yyyy")<br />
+                                    <small>@r.ScheduledAt.ToString("HH:mm")</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@r.TotalOrders</span>
+                                    @if (r.DeliveredOrders > 0)
+                                    {
+                                        <span class="badge bg-success ms-1">@r.DeliveredOrders delivered</span>
+                                    }
+                                </td>
+                                <td><strong>$@r.TotalRevenue.ToString("N2")</strong></td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a class="btn btn-sm btn-outline-primary" href="@Url.Action("Details","DeliveryRoutes", new { id = r.Id, area = "Admin" })" title="View Details">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Edit","DeliveryRoutes", new { id = r.Id, area = "Admin" })" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form method="post" action="@Url.Action("Delete","DeliveryRoutes", new { area = "Admin", id = r.Id })" class="d-inline">
+                                            <button class="btn btn-sm btn-outline-danger" type="submit" onclick="return confirm('Delete this route? All assigned orders will be unassigned.')" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 text-secondary">
+                <i class="bi bi-truck display-4"></i>
+                <p class="mt-2">No routes found</p>
+                <a href="@Url.Action("Create", "DeliveryRoutes", new { area = "Admin" })" class="btn btn-primary mt-2">
+                    <i class="bi bi-plus-circle"></i> Create First Route
+                </a>
+            </div>
+        }
+    </div>
+</div>

@@ -4,6 +4,7 @@ using DeliveryServices.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DeliveryServices.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251105140816_AddDeliveryRoutes")]
+    partial class AddDeliveryRoutes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,71 +33,20 @@ namespace DeliveryServices.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime?>("CompletedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("CourierName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RouteName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ScheduledAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("StartedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("DeliveryRoutes");
-                });
-
-            modelBuilder.Entity("DeliveryServices.Models.MerchantPayouts", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("MerchantId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("PaidAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentMethod")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("ProcessedBy")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MerchantId");
-
-                    b.ToTable("MerchantPayouts");
                 });
 
             modelBuilder.Entity("DeliveryServices.Models.Merchants", b =>
@@ -110,9 +62,6 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<decimal>("CurrentBalance")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -126,9 +75,6 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("TotalPaidOut")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -147,6 +93,7 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ProductDescription")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ProductName")
@@ -201,13 +148,7 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("DeliveryFee")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("DeliveryRouteId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MerchantId")
+                    b.Property<int?>("DeliveryRoutesId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -215,9 +156,7 @@ namespace DeliveryServices.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DeliveryRouteId");
-
-                    b.HasIndex("MerchantId");
+                    b.HasIndex("DeliveryRoutesId");
 
                     b.ToTable("Orders");
                 });
@@ -420,17 +359,6 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DeliveryServices.Models.MerchantPayouts", b =>
-                {
-                    b.HasOne("DeliveryServices.Models.Merchants", "Merchant")
-                        .WithMany("Payouts")
-                        .HasForeignKey("MerchantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Merchant");
-                });
-
             modelBuilder.Entity("DeliveryServices.Models.OrderItems", b =>
                 {
                     b.HasOne("DeliveryServices.Models.Orders", "Order")
@@ -444,17 +372,9 @@ namespace DeliveryServices.DataAccess.Migrations
 
             modelBuilder.Entity("DeliveryServices.Models.Orders", b =>
                 {
-                    b.HasOne("DeliveryServices.Models.DeliveryRoutes", "DeliveryRoute")
+                    b.HasOne("DeliveryServices.Models.DeliveryRoutes", null)
                         .WithMany("Orders")
-                        .HasForeignKey("DeliveryRouteId");
-
-                    b.HasOne("DeliveryServices.Models.Merchants", "Merchant")
-                        .WithMany("Orders")
-                        .HasForeignKey("MerchantId");
-
-                    b.Navigation("DeliveryRoute");
-
-                    b.Navigation("Merchant");
+                        .HasForeignKey("DeliveryRoutesId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -511,13 +431,6 @@ namespace DeliveryServices.DataAccess.Migrations
             modelBuilder.Entity("DeliveryServices.Models.DeliveryRoutes", b =>
                 {
                     b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("DeliveryServices.Models.Merchants", b =>
-                {
-                    b.Navigation("Orders");
-
-                    b.Navigation("Payouts");
                 });
 
             modelBuilder.Entity("DeliveryServices.Models.Orders", b =>

@@ -1,0 +1,158 @@
+@model IEnumerable<DeliveryServices.Models.Orders>
+@{
+    ViewData["Title"] = "Orders";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Orders</h2>
+            <p class="text-secondary mb-0">Manage all delivery orders</p>
+        </div>
+        <a href="@Url.Action("Create", "Orders", new { area = "Admin" })" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Order
+        </a>
+    </div>
+}
+
+<!-- Order Filters -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <select class="form-select" id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="PickedUp">Picked Up</option>
+                    <option value="InTransit">In Transit</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search by customer name, phone..." id="searchInput">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="ordersTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Merchant</th>
+                            <th>Customer</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Items</th>
+                            <th>Subtotal</th>
+                            <th>Del. Fee</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            var statusBadge = order.Status switch
+                            {
+                                DeliveryServices.Models.OrderStatus.Pending => "bg-warning",
+                                DeliveryServices.Models.OrderStatus.PickedUp => "bg-info",
+                                DeliveryServices.Models.OrderStatus.InTransit => "bg-primary",
+                                DeliveryServices.Models.OrderStatus.Delivered => "bg-success",
+                                DeliveryServices.Models.OrderStatus.Cancelled => "bg-danger",
+                                _ => "bg-secondary"
+                            };
+
+                            <tr>
+                                <td><strong>#@order.Id</strong></td>
+                                <td>
+                                    @if (order.Merchant != null)
+                                    {
+                                        <span class="badge bg-info">@order.Merchant.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary">-</span>
+                                    }
+                                </td>
+                                <td>@order.CustomerName</td>
+                                <td>@order.CustomerPhone</td>
+                                <td>
+                                    <span class="d-inline-block text-truncate" style="max-width: 150px;" title="@order.CustomerAddress">
+                                        @order.CustomerAddress
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">@order.Items.Count items</span>
+                                </td>
+                                <td><strong>$@order.SubTotal.ToString("N2")</strong></td>
+                                <td><span class="text-info">$@order.DeliveryFee.ToString("N2")</span></td>
+                                <td><strong class="text-success">$@order.Total.ToString("N2")</strong></td>
+                                <td>
+                                    <span class="badge @statusBadge">@order.Status</span>
+                                </td>
+                                <td class="text-secondary small">
+                                    @order.CreatedAt.ToString("MMM dd, yyyy")<br />
+                                    <small>@order.CreatedAt.ToString("HH:mm")</small>
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Orders", new { id = order.Id, area = "Admin" })" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-5 text-secondary">
+                <i class="bi bi-inbox display-4"></i>
+                <p class="mt-2">No orders found</p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Simple client-side filtering
+        const searchInput = document.getElementById('searchInput');
+        const statusFilter = document.getElementById('statusFilter');
+        const table = document.getElementById('ordersTable');
+
+        function filterTable() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const statusValue = statusFilter.value;
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const statusCell = row.querySelector('td:nth-child(10)').textContent.trim();
+                
+                const matchesSearch = text.includes(searchTerm);
+                const matchesStatus = !statusValue || statusCell === statusValue;
+
+                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterTable);
+        statusFilter.addEventListener('change', filterTable);
+    </script>
+}

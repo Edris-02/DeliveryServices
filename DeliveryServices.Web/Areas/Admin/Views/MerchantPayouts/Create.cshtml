@@ -1,0 +1,97 @@
+@model DeliveryServices.Models.MerchantPayouts
+@{
+    ViewData["Title"] = "Process Payout";
+    var merchant = ViewBag.Merchant as DeliveryServices.Models.Merchants;
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Process Payout</h2>
+            <p class="text-secondary mb-0">Pay merchant: @merchant.Name</p>
+        </div>
+        <a href="@Url.Action("Details", "Merchants", new { id = Model.MerchantId, area = "Admin" })" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-warning bg-opacity-10 border-bottom">
+                <h5 class="mb-0 text-warning"><i class="bi bi-cash-coin"></i> Payout Information</h5>
+            </div>
+            <div class="card-body">
+                <!-- Merchant Balance Info -->
+                <div class="alert alert-warning">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <strong>Current Balance Owed:</strong> $@merchant.CurrentBalance.ToString("N2")
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <span class="badge bg-warning fs-6">$@merchant.CurrentBalance.ToString("N2")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="post" asp-action="Create" asp-controller="MerchantPayouts">
+                    <input type="hidden" asp-for="MerchantId" />
+                    <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Amount" class="form-label">Payout Amount <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            <input asp-for="Amount" class="form-control form-control-lg" type="number" step="0.01" min="0.01" max="@merchant.CurrentBalance" required />
+                        </div>
+                        <small class="text-muted">Maximum: $@merchant.CurrentBalance.ToString("N2")</small>
+                        <span asp-validation-for="Amount" class="text-danger d-block"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
+                        <select asp-for="PaymentMethod" class="form-select">
+                            <option value="">-- Select Method --</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Check">Check</option>
+                            <option value="Mobile Payment">Mobile Payment</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ProcessedBy" class="form-label">Processed By</label>
+                        <input asp-for="ProcessedBy" class="form-control" placeholder="Your name or admin username" />
+                        <span asp-validation-for="ProcessedBy" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional notes (receipt number, transaction ID, etc.)"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> <strong>Note:</strong> This will deduct $@Model.Amount.ToString("N2") from the merchant's balance and create a payout record.
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Details", "Merchants", new { id = Model.MerchantId, area = "Admin" })" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-cash-coin"></i> Process Payment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -10,25 +10,26 @@ namespace DeliveryServices.DataAccess.Repository
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ApplicationDbContext _context;
-        public IMerchantRepository Merchants { get; private set; }
-        public IProductRepository Products { get; private set; }
-        public IOrderRepository Orders { get; private set; }
-        public IOrderItemRepository OrderItems { get; private set; }
-        public IDeliveryRouteRepository DeliveryRoutes { get; private set; }
-
-        public UnitOfWork(ApplicationDbContext context)
+        private ApplicationDbContext _db;
+        public UnitOfWork(ApplicationDbContext db)
         {
-            _context = context;
-            Merchants = new MerchantRepository(_context);
-            Products = new ProductRepository(_context);
-            Orders = new OrderRepository(_context);
-            OrderItems = new OrderItemRepository(_context);
-            DeliveryRoutes = new DeliveryRouteRepository(_context);
+            _db = db;
+            Merchant = new MerchantRepository(_db);
+            OrderItem = new OrderItemRepository(_db);
+            Order = new OrderRepository(_db);
+            DeliveryRoute = new DeliveryRouteRepository(_db);
+            MerchantPayout = new MerchantPayoutRepository(_db);
         }
-        public void SaveChanges()
+
+        public IMerchantRepository Merchant { get; private set; }
+        public IOrderItemRepository OrderItem { get; private set; }
+        public IOrderRepository Order { get; private set; }
+        public IDeliveryRouteRepository DeliveryRoute { get; private set; }
+        public IMerchantPayoutRepository MerchantPayout { get; private set; }
+
+        public void Save()
         {
-            _context.SaveChanges();
+            _db.SaveChanges();
         }
     }
 }

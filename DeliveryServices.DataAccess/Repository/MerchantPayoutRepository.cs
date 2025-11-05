@@ -4,17 +4,18 @@ using DeliveryServices.Models;
 
 namespace DeliveryServices.DataAccess.Repository
 {
-    public class ProductRepository : Repository<Product>, IProductRepository
+    public class MerchantPayoutRepository : Repository<MerchantPayouts>, IMerchantPayoutRepository
     {
         private readonly ApplicationDbContext _context;
-        public ProductRepository(ApplicationDbContext context) : base(context)
+
+        public MerchantPayoutRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
         }
 
-        public void Update(Product product)
+        public void Update(MerchantPayouts payout)
         {
-            _context.Update(product);
+            _context.Update(payout);
         }
     }
 }

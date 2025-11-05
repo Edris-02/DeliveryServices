@@ -1,0 +1,75 @@
+@model DeliveryServices.Models.DeliveryRoutes
+@{
+    ViewData["Title"] = "Edit Route";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Edit Delivery Route</h2>
+            <p class="text-secondary mb-0">Update route details</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="@Url.Action("Details", "DeliveryRoutes", new { id = Model.Id, area = "Admin" })" class="btn btn-outline-primary">
+                <i class="bi bi-eye"></i> View Details
+            </a>
+            <a href="@Url.Action("Index", "DeliveryRoutes", new { area = "Admin" })" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" asp-action="Edit" asp-controller="DeliveryRoutes">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Status" />
+                    <input type="hidden" asp-for="StartedAt" />
+                    <input type="hidden" asp-for="CompletedAt" />
+                    
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="RouteName" class="form-label">Route Name <span class="text-danger">*</span></label>
+                        <input asp-for="RouteName" class="form-control" required />
+                        <span asp-validation-for="RouteName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="CourierName" class="form-label">Courier Name <span class="text-danger">*</span></label>
+                        <input asp-for="CourierName" class="form-control" required />
+                        <span asp-validation-for="CourierName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ScheduledAt" class="form-label">Scheduled At <span class="text-danger">*</span></label>
+                        <input asp-for="ScheduledAt" type="datetime-local" class="form-control" required />
+                        <span asp-validation-for="ScheduledAt" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label">Notes</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Additional route notes or instructions"></textarea>
+                        <span asp-validation-for="Notes" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Route
+                        </button>
+                        <a href="@Url.Action("Details", "DeliveryRoutes", new { id = Model.Id, area = "Admin" })" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

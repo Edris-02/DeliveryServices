@@ -8,11 +8,11 @@ namespace DeliveryServices.DataAccess.Repository.IRepository
 {
     public interface IUnitOfWork
     {
-        IMerchantRepository Merchants { get; }
-        IProductRepository Products { get; }
-        IOrderRepository Orders { get; }
-        IOrderItemRepository OrderItems { get; }
-        IDeliveryRouteRepository DeliveryRoutes { get; }
-        void SaveChanges();
+        IMerchantRepository Merchant { get; }
+        IOrderItemRepository OrderItem { get; }
+        IOrderRepository Order { get; }
+        IDeliveryRouteRepository DeliveryRoute { get; }
+        IMerchantPayoutRepository MerchantPayout { get; }
+        void Save();
     }
 }

@@ -1,0 +1,71 @@
+@model DeliveryServices.Models.Merchants
+@{
+    ViewData["Title"] = "Edit Merchant";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Edit Merchant</h2>
+            <p class="text-secondary mb-0">Update merchant information</p>
+        </div>
+        <a href="@Url.Action("Index", "Merchants", new { area = "Admin" })" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" asp-action="Edit" asp-controller="Merchants">
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="CurrentBalance" />
+                    <input type="hidden" asp-for="TotalPaidOut" />
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Merchant Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    @if (Model.CurrentBalance > 0)
+                    {
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> <strong>Current Balance:</strong> $@Model.CurrentBalance.ToString("N2") owed to this merchant
+                        </div>
+                    }
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Merchant
+                        </button>
+                        <a href="@Url.Action("Index", "Merchants", new { area = "Admin" })" class="btn btn-outline-secondary">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

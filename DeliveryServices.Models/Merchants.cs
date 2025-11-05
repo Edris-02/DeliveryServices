@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DeliveryServices.Models
 {
@@ -27,9 +26,24 @@ namespace DeliveryServices.Models
         [StringLength(250)]
         public string Address { get; set; }
 
-        // Navigation: a merchant can have many products
-        public virtual ICollection<Product> Products { get; set; } = new List<Product>();
+        // Current balance owed to merchant (total of delivered orders minus payouts)
+        public decimal CurrentBalance { get; set; } = 0m;
 
-        //public virtual ICollection<Package> Packages { get; set; } = new List<Package>();
+        // Total amount paid to merchant historically
+        public decimal TotalPaidOut { get; set; } = 0m;
+
+        // Navigation properties
+        public virtual ICollection<Orders> Orders { get; set; } = new List<Orders>();
+        public virtual ICollection<MerchantPayouts> Payouts { get; set; } = new List<MerchantPayouts>();
+
+        // Computed properties
+        [NotMapped]
+        public decimal TotalRevenue => Orders?.Where(o => o.Status == OrderStatus.Delivered).Sum(o => o.SubTotal) ?? 0m;
+
+        [NotMapped]
+        public int TotalOrders => Orders?.Count ?? 0;
+
+        [NotMapped]
+        public int DeliveredOrders => Orders?.Count(o => o.Status == OrderStatus.Delivered) ?? 0;
     }
 }
