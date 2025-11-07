@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace DeliveryServices.Models
 {
@@ -38,7 +39,7 @@ namespace DeliveryServices.Models
 
         public virtual ICollection<OrderItems> Items { get; set; } = new List<OrderItems>();
 
-        // Total computed from items (not mapped to database)
+        // Total computed from delivered items only (not mapped to database)
         [NotMapped]
         public decimal SubTotal => ComputeSubTotal();
 
@@ -50,12 +51,28 @@ namespace DeliveryServices.Models
         [NotMapped]
         public decimal MerchantAmount => SubTotal;
 
+        // Count of delivered items
+        [NotMapped]
+        public int DeliveredItemsCount => Items.Count(i => i.Status == OrderItemStatus.Delivered);
+
+        // Count of cancelled items
+        [NotMapped]
+        public int CancelledItemsCount => Items.Count(i => i.Status == OrderItemStatus.Cancelled);
+
+        // Count of pending items
+        [NotMapped]
+        public int PendingItemsCount => Items.Count(i => i.Status == OrderItemStatus.Pending);
+
         private decimal ComputeSubTotal()
         {
             decimal sum = 0m;
             foreach (var it in Items)
             {
-                sum += it.UnitPrice * it.Quantity;
+                // Only include delivered items in subtotal
+                if (it.Status == OrderItemStatus.Delivered)
+                {
+                    sum += it.UnitPrice * it.Quantity;
+                }
             }
             return sum;
         }

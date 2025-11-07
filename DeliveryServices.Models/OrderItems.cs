@@ -23,8 +23,18 @@ namespace DeliveryServices.Models
         [Range(0, double.MaxValue)]
         public decimal UnitPrice { get; set; }
 
+        // Status of this specific item
+        public OrderItemStatus Status { get; set; } = OrderItemStatus.Pending;
+
         // Link to Order (a delivery request)
         public int OrderId { get; set; }
         public virtual Orders? Order { get; set; }
+    }
+
+    public enum OrderItemStatus
+    {
+        Pending,
+        Delivered,
+        Cancelled
     }
 }

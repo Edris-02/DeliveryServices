@@ -249,29 +249,14 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 ProductSKU = string.IsNullOrWhiteSpace(productSKU) ? null : productSKU.Trim(),
                 ProductDescription = string.IsNullOrWhiteSpace(productDescription) ? null : productDescription.Trim(),
                 Quantity = quantity,
-                UnitPrice = unitPrice
+                UnitPrice = unitPrice,
+                Status = OrderItemStatus.Pending // New items start as Pending
             };
 
             _unitOfWork.OrderItem.Add(item);
             _unitOfWork.Save();
 
-            // If order is already delivered, update merchant balance
-            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue)
-            {
-                // Reload order to get updated SubTotal with new item
-                var updatedOrder = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items");
-                var newSubTotal = updatedOrder.SubTotal;
-                var difference = newSubTotal - oldSubTotal;
-
-                var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
-                if (merchant != null)
-                {
-                    merchant.CurrentBalance += difference;
-                    _unitOfWork.Merchant.Update(merchant);
-                    _unitOfWork.Save();
-                }
-            }
-
+            // No merchant balance update for pending items - only update when item is delivered
             TempData["success"] = "Item added to order";
             return RedirectToAction(nameof(Details), new { id = orderId });
         }
@@ -306,8 +291,8 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // Store old item value
-            var oldItemValue = item.Quantity * item.UnitPrice;
+            // Store old item value if it's delivered
+            var oldItemValue = item.Status == OrderItemStatus.Delivered ? (item.Quantity * item.UnitPrice) : 0m;
 
             // Update item
             item.ProductName = productName.Trim();
@@ -316,13 +301,13 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             item.Quantity = quantity;
             item.UnitPrice = unitPrice;
 
-            var newItemValue = item.Quantity * item.UnitPrice;
+            var newItemValue = item.Status == OrderItemStatus.Delivered ? (item.Quantity * item.UnitPrice) : 0m;
             var difference = newItemValue - oldItemValue;
 
             _unitOfWork.OrderItem.Update(item);
             _unitOfWork.Save();
 
-            // If order is already delivered, update merchant balance
+            // If order is already delivered and item is delivered, update merchant balance
             if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue && difference != 0)
             {
                 var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
@@ -355,14 +340,14 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            // Store the item value before removing
-            var itemValue = item.Quantity * item.UnitPrice;
+            // Store the item value before removing (only if delivered)
+            var itemValue = item.Status == OrderItemStatus.Delivered ? (item.Quantity * item.UnitPrice) : 0m;
 
             _unitOfWork.OrderItem.Remove(item);
             _unitOfWork.Save();
 
-            // If order is already delivered, update merchant balance
-            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue)
+            // If order is already delivered and item was delivered, update merchant balance
+            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue && itemValue > 0)
             {
                 var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
                 if (merchant != null)
@@ -374,6 +359,56 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             }
 
             TempData["success"] = "Item removed from order";
+            return RedirectToAction(nameof(Details), new { id = orderId });
+        }
+
+        // POST: Update individual item status
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateItemStatus(int orderId, int itemId, OrderItemStatus status)
+        {
+            var order = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items,Merchant");
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var item = _unitOfWork.OrderItem.Get(oi => oi.Id == itemId && oi.OrderId == orderId, tracked: true);
+            if (item == null)
+            {
+                return NotFound();
+            }
+
+            var previousStatus = item.Status;
+            item.Status = status;
+
+            var itemValue = item.Quantity * item.UnitPrice;
+
+            // Update merchant balance based on status change
+            if (order.Status == OrderStatus.Delivered && order.MerchantId.HasValue)
+            {
+                var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                if (merchant != null)
+                {
+                    // If item changed TO delivered, add to merchant balance
+                    if (status == OrderItemStatus.Delivered && previousStatus != OrderItemStatus.Delivered)
+                    {
+                        merchant.CurrentBalance += itemValue;
+                    }
+                    // If item changed FROM delivered to something else, subtract from merchant balance
+                    else if (previousStatus == OrderItemStatus.Delivered && status != OrderItemStatus.Delivered)
+                    {
+                        merchant.CurrentBalance -= itemValue;
+                    }
+
+                    _unitOfWork.Merchant.Update(merchant);
+                }
+            }
+
+            _unitOfWork.OrderItem.Update(item);
+            _unitOfWork.Save();
+
+            TempData["success"] = $"Item status updated to {status}";
             return RedirectToAction(nameof(Details), new { id = orderId });
         }
     }
