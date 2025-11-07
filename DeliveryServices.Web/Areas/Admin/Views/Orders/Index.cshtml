@@ -97,14 +97,14 @@
                                 <td>
                                     <span class="badge bg-secondary">@order.Items.Count items</span>
                                 </td>
-                                <td><strong>$@order.SubTotal.ToString("N2")</strong></td>
-                                <td><span class="text-info">$@order.DeliveryFee.ToString("N2")</span></td>
-                                <td><strong class="text-success">$@order.Total.ToString("N2")</strong></td>
+                                <td><strong>@order.SubTotal.ToString("N2")</strong></td>
+                                <td><span class="text-info">@order.DeliveryFee.ToString("N2")</span></td>
+                                <td><strong class="text-success">@order.Total.ToString("N2")</strong></td>
                                 <td>
                                     <span class="badge @statusBadge">@order.Status</span>
                                 </td>
                                 <td class="text-secondary small">
-                                    @order.CreatedAt.ToString("MMM dd, yyyy")<br />
+                                    @order.CreatedAt.ToString("yyyy/MM/dd")<br />
                                     <small>@order.CreatedAt.ToString("HH:mm")</small>
                                 </td>
                                 <td>

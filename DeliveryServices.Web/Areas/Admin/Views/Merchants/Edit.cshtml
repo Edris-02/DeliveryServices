@@ -46,7 +46,7 @@
                     @if (Model.CurrentBalance > 0)
                     {
                         <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> <strong>Current Balance:</strong> $@Model.CurrentBalance.ToString("N2") owed to this merchant
+                            <i class="bi bi-info-circle"></i> <strong>Current Balance:</strong> @Model.CurrentBalance.ToString("N2") owed to this merchant
                         </div>
                     }
 

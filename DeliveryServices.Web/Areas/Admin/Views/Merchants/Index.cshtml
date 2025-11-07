@@ -58,11 +58,11 @@
                                 <td>
                                     @if (m.CurrentBalance > 0)
                                     {
-                                        <span class="badge bg-warning fs-6">$@m.CurrentBalance.ToString("N2")</span>
+                                        <span class="badge bg-warning fs-6">@m.CurrentBalance.ToString("N2")</span>
                                     }
                                     else
                                     {
-                                        <span class="text-secondary">$0.00</span>
+                                        <span class="text-secondary">0.00</span>
                                     }
                                 </td>
                                 <td class="text-end">

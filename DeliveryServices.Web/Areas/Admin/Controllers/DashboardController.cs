@@ -29,17 +29,17 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             viewModel.DeliveredOrders = allOrders.Count(o => o.Status == OrderStatus.Delivered);
             viewModel.TotalMerchants = _unitOfWork.Merchant.GetAll().Count();
 
-            // Revenue calculations
+            // Revenue calculations - Only delivery fees are revenue for the delivery service
             var today = DateTime.UtcNow.Date;
             var startOfMonth = new DateTime(today.Year, today.Month, 1);
 
             viewModel.TodayRevenue = allOrders
                 .Where(o => o.CreatedAt.Date == today && o.Status == OrderStatus.Delivered)
-                .Sum(o => o.Total);
+                .Sum(o => o.DeliveryFee);
 
             viewModel.MonthRevenue = allOrders
                 .Where(o => o.CreatedAt >= startOfMonth && o.Status == OrderStatus.Delivered)
-                .Sum(o => o.Total);
+                .Sum(o => o.DeliveryFee);
 
             // Recent orders (last 10)
             viewModel.RecentOrders = allOrders
@@ -61,7 +61,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 .GroupBy(o => o.Status.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            // Daily revenue for last 7 days
+            // Daily revenue for last 7 days - Only delivery fees
             var last7Days = Enumerable.Range(0, 7)
                 .Select(i => today.AddDays(-i))
                 .Reverse();
@@ -71,7 +71,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     date => date.ToString("MMM dd"),
                     date => allOrders
                         .Where(o => o.CreatedAt.Date == date && o.Status == OrderStatus.Delivered)
-                        .Sum(o => o.Total)
+                        .Sum(o => o.DeliveryFee)
                 );
 
             return View(viewModel);

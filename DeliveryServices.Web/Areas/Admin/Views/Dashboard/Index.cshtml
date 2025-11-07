@@ -12,7 +12,7 @@
         <div>
             <span class="text-secondary">
                 <i class="bi bi-clock"></i>
-                Last updated: @DateTime.Now.ToString("MMM dd, yyyy HH:mm")
+                Last updated: @DateTime.Now.ToString("yyyy/MM/dd HH:mm")
             </span>
         </div>
     </div>
@@ -93,7 +93,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <h6 class="mb-0"><i class="bi bi-calendar-day text-primary"></i> Today's Revenue</h6>
                 </div>
-                <h2 class="mb-0 fw-bold text-success">$@Model.TodayRevenue.ToString("N2")</h2>
+                <h2 class="mb-0 fw-bold text-success">@Model.TodayRevenue.ToString("N2")</h2>
             </div>
         </div>
     </div>
@@ -103,7 +103,7 @@
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <h6 class="mb-0"><i class="bi bi-calendar-month text-primary"></i> This Month's Revenue</h6>
                 </div>
-                <h2 class="mb-0 fw-bold text-success">$@Model.MonthRevenue.ToString("N2")</h2>
+                <h2 class="mb-0 fw-bold text-success">@Model.MonthRevenue.ToString("N2")</h2>
             </div>
         </div>
     </div>
@@ -178,8 +178,8 @@
                                 <td>
                                     <span class="badge @statusBadge">@order.Status</span>
                                 </td>
-                                <td><strong>$@order.Total.ToString("N2")</strong></td>
-                                <td class="text-secondary small">@order.CreatedAt.ToString("MMM dd, HH:mm")</td>
+                                <td><strong>@order.Total.ToString("N2")</strong></td>
+                                <td class="text-secondary small">@order.CreatedAt.ToString("yyyy/MM/dd HH:mm")</td>
                             </tr>
                         }
                     </tbody>
@@ -208,7 +208,7 @@
                 data: {
                     labels: Object.keys(revenueData),
                     datasets: [{
-                        label: 'Revenue ($)',
+                        label: 'Revenue',
                         data: Object.values(revenueData),
                         backgroundColor: 'rgba(13, 110, 253, 0.8)',
                         borderColor: 'rgba(13, 110, 253, 1)',
@@ -227,7 +227,7 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return '$' + value.toFixed(0);
+                                    return value.toFixed(0);
                                 }
                             }
                         }
