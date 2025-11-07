@@ -239,9 +239,25 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return View(payment);
             }
 
-            // Process payment
-            payment.ProcessedBy = User.Identity?.Name ?? "Admin";
-            _unitOfWork.DriverSalaryPayment.Add(payment);
+            // Create a new payment object to avoid identity insert issues
+            // Model binding sets Id = 0, which EF interprets as an explicit identity value
+            var newPayment = new DriverSalaryPayment
+            {
+                DriverId = payment.DriverId,
+                Amount = payment.Amount,
+                BaseSalaryPortion = payment.BaseSalaryPortion,
+                CommissionPortion = payment.CommissionPortion,
+                DeliveriesCount = payment.DeliveriesCount,
+                PaymentDate = payment.PaymentDate,
+                PeriodStart = payment.PeriodStart,
+                PeriodEnd = payment.PeriodEnd,
+                PaymentMethod = payment.PaymentMethod,
+                ProcessedBy = User.Identity?.Name ?? "Admin",
+                Notes = payment.Notes,
+                TransactionReference = payment.TransactionReference
+            };
+
+            _unitOfWork.DriverSalaryPayment.Add(newPayment);
 
             // Update driver balance
             driver.CurrentBalance -= payment.Amount;

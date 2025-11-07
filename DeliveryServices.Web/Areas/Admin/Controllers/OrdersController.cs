@@ -52,6 +52,14 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     Text = m.Name 
                 }).ToList();
 
+            // Load active drivers for dropdown
+            ViewBag.Drivers = _unitOfWork.Driver.GetAll(d => d.IsActive)
+                .Select(d => new SelectListItem 
+                { 
+                    Value = d.Id.ToString(), 
+                    Text = d.FullName 
+                }).ToList();
+
             return View(model);
         }
 
@@ -63,6 +71,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             // Remove validation errors for navigation properties
             ModelState.Remove("Merchant");
             ModelState.Remove("Items");
+            ModelState.Remove("Driver");
 
             if (!ModelState.IsValid)
             {
@@ -73,12 +82,22 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                         Value = m.Id.ToString(), 
                         Text = m.Name 
                     }).ToList();
+
+                // Reload drivers for dropdown
+                ViewBag.Drivers = _unitOfWork.Driver.GetAll(d => d.IsActive)
+                    .Select(d => new SelectListItem 
+                    { 
+                        Value = d.Id.ToString(), 
+                        Text = d.FullName 
+                    }).ToList();
+
                 return View(order);
             }
 
             // Ensure Items collection is initialized
             order.Items ??= new List<OrderItems>();
             order.Merchant = null; // Clear navigation property
+            order.Driver = null; // Clear navigation property
 
             _unitOfWork.Order.Add(order);
             _unitOfWork.Save();
@@ -172,7 +191,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateStatus(int id, OrderStatus status)
         {
-            var order = _unitOfWork.Order.Get(o => o.Id == id, includeProperties: "Items,Merchant", tracked: true);
+            var order = _unitOfWork.Order.Get(o => o.Id == id, includeProperties: "Items,Merchant,Driver", tracked: true);
             if (order == null)
             {
                 return NotFound();
@@ -181,32 +200,120 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             var previousStatus = order.Status;
             order.Status = status;
 
-            if (status == OrderStatus.Delivered && previousStatus != OrderStatus.Delivered)
+            // When order status is set to Delivered, mark all items as Delivered
+            if (status == OrderStatus.Delivered)
             {
                 order.DeliveredAt = DateTime.UtcNow;
 
-                // Update merchant balance when order is delivered
-                if (order.MerchantId.HasValue)
+                // Update all items to Delivered status
+                foreach (var item in order.Items)
+                {
+                    if (item.Status != OrderItemStatus.Delivered)
+                    {
+                        var trackedItem = _unitOfWork.OrderItem.Get(i => i.Id == item.Id, tracked: true);
+                        if (trackedItem != null)
+                        {
+                            trackedItem.Status = OrderItemStatus.Delivered;
+                            _unitOfWork.OrderItem.Update(trackedItem);
+                        }
+                    }
+                }
+
+                // Update merchant balance only if status changed to Delivered
+                if (previousStatus != OrderStatus.Delivered && order.MerchantId.HasValue)
                 {
                     var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
                     if (merchant != null)
                     {
-                        // Add the merchant's share (subtotal, excluding delivery fee) to their balance
                         merchant.CurrentBalance += order.SubTotal;
                         _unitOfWork.Merchant.Update(merchant);
                     }
                 }
+
+                // Update driver stats when order is delivered
+                if (previousStatus != OrderStatus.Delivered && order.DriverId.HasValue)
+                {
+                    var driver = _unitOfWork.Driver.Get(d => d.Id == order.DriverId.Value, tracked: true);
+                    if (driver != null)
+                    {
+                        driver.TotalDeliveries++;
+                        driver.CurrentMonthDeliveries++;
+                        driver.CurrentBalance += driver.CommissionPerDelivery;
+                        _unitOfWork.Driver.Update(driver);
+                    }
+                }
             }
-            else if (previousStatus == OrderStatus.Delivered && status != OrderStatus.Delivered)
+            // When order status is set to Cancelled, mark all items as Cancelled
+            else if (status == OrderStatus.Cancelled)
             {
-                // If order was delivered but now changed to another status, subtract from merchant balance
-                if (order.MerchantId.HasValue)
+                // Update all items to Cancelled status
+                foreach (var item in order.Items)
+                {
+                    if (item.Status != OrderItemStatus.Cancelled)
+                    {
+                        var trackedItem = _unitOfWork.OrderItem.Get(i => i.Id == item.Id, tracked: true);
+                        if (trackedItem != null)
+                        {
+                            trackedItem.Status = OrderItemStatus.Cancelled;
+                            _unitOfWork.OrderItem.Update(trackedItem);
+                        }
+                    }
+                }
+
+                // If was previously delivered, revert merchant balance
+                if (previousStatus == OrderStatus.Delivered && order.MerchantId.HasValue)
                 {
                     var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
                     if (merchant != null)
                     {
                         merchant.CurrentBalance -= order.SubTotal;
                         _unitOfWork.Merchant.Update(merchant);
+                    }
+                }
+
+                // If was previously delivered, revert driver stats
+                if (previousStatus == OrderStatus.Delivered && order.DriverId.HasValue)
+                {
+                    var driver = _unitOfWork.Driver.Get(d => d.Id == order.DriverId.Value, tracked: true);
+                    if (driver != null && driver.TotalDeliveries > 0)
+                    {
+                        driver.TotalDeliveries--;
+                        if (driver.CurrentMonthDeliveries > 0)
+                            driver.CurrentMonthDeliveries--;
+                        driver.CurrentBalance -= driver.CommissionPerDelivery;
+                        _unitOfWork.Driver.Update(driver);
+                    }
+                }
+            }
+            // For other statuses (Pending, PickedUp, InTransit)
+            else
+            {
+                // If was previously delivered, revert balances and stats
+                if (previousStatus == OrderStatus.Delivered)
+                {
+                    // Revert merchant balance
+                    if (order.MerchantId.HasValue)
+                    {
+                        var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                        if (merchant != null)
+                        {
+                            merchant.CurrentBalance -= order.SubTotal;
+                            _unitOfWork.Merchant.Update(merchant);
+                        }
+                    }
+
+                    // Revert driver stats
+                    if (order.DriverId.HasValue)
+                    {
+                        var driver = _unitOfWork.Driver.Get(d => d.Id == order.DriverId.Value, tracked: true);
+                        if (driver != null && driver.TotalDeliveries > 0)
+                        {
+                            driver.TotalDeliveries--;
+                            if (driver.CurrentMonthDeliveries > 0)
+                                driver.CurrentMonthDeliveries--;
+                            driver.CurrentBalance -= driver.CommissionPerDelivery;
+                            _unitOfWork.Driver.Update(driver);
+                        }
                     }
                 }
             }
@@ -369,7 +476,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult UpdateItemStatus(int orderId, int itemId, OrderItemStatus status)
         {
-            var order = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items,Merchant");
+            var order = _unitOfWork.Order.Get(o => o.Id == orderId, includeProperties: "Items,Merchant", tracked: true);
             if (order == null)
             {
                 return NotFound();
@@ -409,6 +516,128 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
             _unitOfWork.OrderItem.Update(item);
             _unitOfWork.Save();
+
+            // Auto-update order status based on all items status
+            var allItems = _unitOfWork.OrderItem.GetAll(i => i.OrderId == orderId).ToList();
+     
+            if (allItems.Any())
+            {
+                var allDelivered = allItems.All(i => i.Status == OrderItemStatus.Delivered);
+                var allCancelled = allItems.All(i => i.Status == OrderItemStatus.Cancelled);
+                var allPending = allItems.All(i => i.Status == OrderItemStatus.Pending);
+
+                // If all items are delivered, mark order as delivered
+                if (allDelivered && order.Status != OrderStatus.Delivered)
+                {
+                    order.Status = OrderStatus.Delivered;
+                    order.DeliveredAt = DateTime.UtcNow;
+
+                    // Update merchant balance (add full order subtotal)
+                    if (order.MerchantId.HasValue)
+                    {
+                        var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                        if (merchant != null)
+                        {
+                            merchant.CurrentBalance += order.SubTotal;
+                            _unitOfWork.Merchant.Update(merchant);
+                        }
+                    }
+
+                    // Update driver stats
+                    if (order.DriverId.HasValue)
+                    {
+                        var driver = _unitOfWork.Driver.Get(d => d.Id == order.DriverId.Value, tracked: true);
+                        if (driver != null)
+                        {
+                            driver.TotalDeliveries++;
+                            driver.CurrentMonthDeliveries++;
+                            driver.CurrentBalance += driver.CommissionPerDelivery;
+                            _unitOfWork.Driver.Update(driver);
+                        }
+                    }
+
+                    _unitOfWork.Order.Update(order);
+                    _unitOfWork.Save();
+
+                    TempData["success"] = "All items delivered! Order marked as Delivered";
+                    return RedirectToAction(nameof(Details), new { id = orderId });
+                }
+                // If all items are cancelled, mark order as cancelled
+                else if (allCancelled && order.Status != OrderStatus.Cancelled)
+                {
+                    var wasDelivered = order.Status == OrderStatus.Delivered;
+                    order.Status = OrderStatus.Cancelled;
+
+                    // If was delivered, revert merchant balance
+                    if (wasDelivered && order.MerchantId.HasValue)
+                    {
+                        var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                        if (merchant != null)
+                        {
+                            merchant.CurrentBalance -= order.SubTotal;
+                            _unitOfWork.Merchant.Update(merchant);
+                        }
+                    }
+
+                    // If was delivered, revert driver stats
+                    if (wasDelivered && order.DriverId.HasValue)
+                    {
+                        var driver = _unitOfWork.Driver.Get(d => d.Id == order.DriverId.Value, tracked: true);
+                        if (driver != null && driver.TotalDeliveries > 0)
+                        {
+                            driver.TotalDeliveries--;
+                            if (driver.CurrentMonthDeliveries > 0)
+                                driver.CurrentMonthDeliveries--;
+                            driver.CurrentBalance -= driver.CommissionPerDelivery;
+                            _unitOfWork.Driver.Update(driver);
+                        }
+                    }
+
+                    _unitOfWork.Order.Update(order);
+                    _unitOfWork.Save();
+
+                    TempData["success"] = "All items cancelled! Order marked as Cancelled";
+                    return RedirectToAction(nameof(Details), new { id = orderId });
+                }
+                // If all items are pending and order is not pending
+                else if (allPending && order.Status != OrderStatus.Pending)
+                {
+                    var wasDelivered = order.Status == OrderStatus.Delivered;
+                    order.Status = OrderStatus.Pending;
+                    order.DeliveredAt = null;
+
+                    // If was delivered, revert merchant balance
+                    if (wasDelivered && order.MerchantId.HasValue)
+                    {
+                        var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                        if (merchant != null)
+                        {
+                            merchant.CurrentBalance -= order.SubTotal;
+                            _unitOfWork.Merchant.Update(merchant);
+                        }
+                    }
+
+                    // If was delivered, revert driver stats
+                    if (wasDelivered && order.DriverId.HasValue)
+                    {
+                        var driver = _unitOfWork.Driver.Get(d => d.Id == order.DriverId.Value, tracked: true);
+                        if (driver != null && driver.TotalDeliveries > 0)
+                        {
+                            driver.TotalDeliveries--;
+                            if (driver.CurrentMonthDeliveries > 0)
+                                driver.CurrentMonthDeliveries--;
+                            driver.CurrentBalance -= driver.CommissionPerDelivery;
+                            _unitOfWork.Driver.Update(driver);
+                        }
+                    }
+
+                    _unitOfWork.Order.Update(order);
+                    _unitOfWork.Save();
+
+                    TempData["success"] = "All items pending! Order marked as Pending";
+                    return RedirectToAction(nameof(Details), new { id = orderId });
+                }
+            }
 
             TempData["success"] = $"Item status updated to {status}";
             return RedirectToAction(nameof(Details), new { id = orderId });
