@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Areas\Admin\Views\DeliveryRoutes\**" />
+    <Content Remove="Areas\Admin\Views\DeliveryRoutes\**" />
+    <EmbeddedResource Remove="Areas\Admin\Views\DeliveryRoutes\**" />
+    <None Remove="Areas\Admin\Views\DeliveryRoutes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
       <PrivateAssets>all</PrivateAssets>
@@ -24,10 +31,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DeliveryServices.DataAccess\DeliveryServices.DataAccess.csproj" />
     <ProjectReference Include="..\DeliveryServices.Models\DeliveryServices.Models.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Areas\Admin\Views\DeliveryRoutes\" />
   </ItemGroup>
 
 </Project>
