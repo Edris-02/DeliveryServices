@@ -1,5 +1,6 @@
 using DeliveryServices.DataAccess.Repository.IRepository;
 using DeliveryServices.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Linq;
 namespace DeliveryServices.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class MerchantPayoutsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

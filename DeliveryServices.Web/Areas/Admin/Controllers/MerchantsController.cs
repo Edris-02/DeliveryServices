@@ -1,18 +1,23 @@
 using DeliveryServices.DataAccess.Repository.IRepository;
 using DeliveryServices.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace DeliveryServices.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class MerchantsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public MerchantsController(IUnitOfWork unitOfWork)
+        public MerchantsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         public IActionResult Index()
@@ -23,7 +28,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
         public IActionResult Details(int id)
         {
-            var merchant = _unitOfWork.Merchant.Get(m => m.Id == id, includeProperties: "Orders.Items,Payouts");
+            var merchant = _unitOfWork.Merchant.Get(m => m.Id == id, includeProperties: "Orders.Items,Payouts,User");
             if (merchant == null)
             {
                 return NotFound();
@@ -38,22 +43,73 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Merchants merchant)
+        public async Task<IActionResult> Create(Merchants merchant)
         {
             // Remove validation errors for navigation properties
             ModelState.Remove("Orders");
             ModelState.Remove("Payouts");
+            ModelState.Remove("User");
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
+                return View(merchant);
+            }
+
+            try
+            {
+                // Check if email already exists
+                var existingUser = await _userManager.FindByEmailAsync(merchant.Email);
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("Email", "A user with this email already exists");
+                    return View(merchant);
+                }
+
+                // Create ApplicationUser for the merchant
+                var user = new ApplicationUser
+                {
+                    UserName = merchant.Email,  // Use email as username
+                    Email = merchant.Email,
+                    FullName = merchant.Name,
+                    PhoneNumber = merchant.PhoneNumber,
+                    EmailConfirmed = true
+                };
+
+                // Generate default password: FirstName@123 (same logic as drivers)
+                var defaultPassword = $"{merchant.Name.Split(' ')[0]}@123";
+                var result = await _userManager.CreateAsync(user, defaultPassword);
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                    ModelState.AddModelError("", $"Failed to create user account: {errors}");
+                    return View(merchant);
+                }
+
+                // Assign Merchant role
+                await _userManager.AddToRoleAsync(user, UserRoles.Merchant);
+
+                // Link merchant to user
+                merchant.UserId = user.Id;
                 merchant.CurrentBalance = 0m;
                 merchant.TotalPaidOut = 0m;
+
+                // Save merchant
                 _unitOfWork.Merchant.Add(merchant);
                 _unitOfWork.Save();
-                TempData["success"] = "Merchant created successfully";
+
+                // Update user with MerchantId
+                user.MerchantId = merchant.Id;
+                await _userManager.UpdateAsync(user);
+
+                TempData["success"] = $"Merchant created successfully! Login credentials - Email: {merchant.Email}, Password: {defaultPassword}";
                 return RedirectToAction(nameof(Details), new { id = merchant.Id });
             }
-            return View(merchant);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Error creating merchant: {ex.Message}");
+                return View(merchant);
+            }
         }
 
         public IActionResult Edit(int id)
@@ -73,6 +129,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             // Remove validation errors for navigation properties
             ModelState.Remove("Orders");
             ModelState.Remove("Payouts");
+            ModelState.Remove("User");
 
             if (ModelState.IsValid)
             {

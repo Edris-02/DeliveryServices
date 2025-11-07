@@ -1,0 +1,130 @@
+@model DeliveryServices.Models.Merchants
+@{
+    ViewData["Title"] = "Business Profile";
+    var user = ViewBag.User as DeliveryServices.Models.ApplicationUser;
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+ <div>
+      <h2 class="mb-1">Business Profile</h2>
+   <p class="text-secondary mb-0">View your business information</p>
+       </div>
+  </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-6">
+   <div class="card border-0 shadow-sm">
+ <div class="card-header bg-transparent border-bottom">
+        <h6 class="mb-0"><i class="bi bi-shop"></i> Business Information</h6>
+   </div>
+  <div class="card-body">
+   <div class="mb-3">
+   <label class="small text-secondary">Business Name</label>
+      <p class="fw-semibold mb-0">@Model.Name</p>
+    </div>
+
+    <div class="mb-3">
+      <label class="small text-secondary">Phone Number</label>
+    <p class="mb-0">@Model.PhoneNumber</p>
+      </div>
+
+      <div class="mb-3">
+    <label class="small text-secondary">Business Address</label>
+       <p class="mb-0">@Model.Address</p>
+   </div>
+
+      <hr />
+
+    <div class="mb-3">
+   <label class="small text-secondary">Current Balance</label>
+    <h4 class="mb-0 text-success">@Model.CurrentBalance.ToString("C")</h4>
+    </div>
+
+     <div class="mb-3">
+  <label class="small text-secondary">Total Revenue</label>
+      <h5 class="mb-0 text-primary">@Model.TotalRevenue.ToString("C")</h5>
+     </div>
+
+  <div class="mb-0">
+  <label class="small text-secondary">Total Paid Out</label>
+<h5 class="mb-0 text-info">@Model.TotalPaidOut.ToString("C")</h5>
+     </div>
+  </div>
+ </div>
+    </div>
+
+ <div class="col-lg-6">
+  <div class="card border-0 shadow-sm">
+      <div class="card-header bg-transparent border-bottom">
+    <h6 class="mb-0"><i class="bi bi-person-circle"></i> Account Information</h6>
+       </div>
+ <div class="card-body">
+       @if (user != null)
+{
+  <div class="mb-3">
+      <label class="small text-secondary">Full Name</label>
+  <p class="fw-semibold mb-0">@user.FullName</p>
+     </div>
+
+   <div class="mb-3">
+  <label class="small text-secondary">Email</label>
+      <p class="mb-0">@user.Email</p>
+   </div>
+
+     <div class="mb-3">
+    <label class="small text-secondary">Username</label>
+    <p class="mb-0">@user.UserName</p>
+  </div>
+
+@if (!string.IsNullOrEmpty(user.PhoneNumber))
+     {
+  <div class="mb-3">
+        <label class="small text-secondary">Contact Phone</label>
+   <p class="mb-0">@user.PhoneNumber</p>
+ </div>
+ }
+     }
+    else
+        {
+   <p class="text-secondary">Account information not available</p>
+    }
+
+       <hr />
+
+      <div class="alert alert-info mb-0">
+        <small>
+       <i class="bi bi-info-circle"></i> To update your business information, please contact support.
+      </small>
+       </div>
+       </div>
+ </div>
+
+  <div class="card border-0 shadow-sm mt-4">
+   <div class="card-header bg-transparent border-bottom">
+   <h6 class="mb-0"><i class="bi bi-bar-chart"></i> Statistics</h6>
+  </div>
+ <div class="card-body">
+       <div class="row text-center">
+   <div class="col-4">
+    <div class="border-end">
+  <h3 class="mb-0">@Model.TotalOrders</h3>
+    <small class="text-secondary">Total Orders</small>
+     </div>
+   </div>
+   <div class="col-4">
+        <div class="border-end">
+  <h3 class="mb-0">@Model.DeliveredOrders</h3>
+   <small class="text-secondary">Delivered</small>
+       </div>
+   </div>
+  <div class="col-4">
+   <h3 class="mb-0">@Model.Payouts.Count</h3>
+   <small class="text-secondary">Payouts</small>
+         </div>
+     </div>
+   </div>
+   </div>
+    </div>
+</div>

@@ -1,0 +1,206 @@
+@model DeliveryServices.Models.Orders
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+   <h2 class="mb-1">Order #@Model.Id</h2>
+   <p class="text-secondary mb-0">Order details and items</p>
+  </div>
+        <a href="@Url.Action("Orders", "Home", new { area = "Merchant" })" class="btn btn-outline-secondary">
+  <i class="bi bi-arrow-left"></i> Back to Orders
+        </a>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Order Information -->
+    <div class="col-lg-8">
+  <!-- Customer Info -->
+<div class="card border-0 shadow-sm mb-4">
+       <div class="card-header bg-transparent border-bottom">
+   <h6 class="mb-0"><i class="bi bi-person"></i> Customer Information</h6>
+       </div>
+            <div class="card-body">
+    <div class="row g-3">
+        <div class="col-md-6">
+       <label class="small text-secondary">Name</label>
+         <p class="fw-semibold mb-0">@Model.CustomerName</p>
+   </div>
+    <div class="col-md-6">
+  <label class="small text-secondary">Phone</label>
+ <p class="mb-0">@Model.CustomerPhone</p>
+            </div>
+             <div class="col-12">
+  <label class="small text-secondary">Delivery Address</label>
+   <p class="mb-0">@Model.CustomerAddress</p>
+   </div>
+   </div>
+         </div>
+ </div>
+
+   <!-- Order Items -->
+  <div class="card border-0 shadow-sm">
+       <div class="card-header bg-transparent border-bottom">
+  <h6 class="mb-0"><i class="bi bi-box-seam"></i> Order Items</h6>
+     </div>
+      <div class="card-body p-0">
+    @if (Model.Items.Any())
+     {
+     <div class="table-responsive">
+      <table class="table table-hover mb-0">
+   <thead class="table-light">
+        <tr>
+      <th>Product</th>
+    <th>Description</th>
+      <th class="text-end">Quantity</th>
+      <th class="text-end">Price</th>
+ <th class="text-end">Subtotal</th>
+    <th>Status</th>
+       </tr>
+    </thead>
+ <tbody>
+           @foreach (var item in Model.Items)
+         {
+    var itemStatusBadge = item.Status switch
+        {
+          DeliveryServices.Models.OrderItemStatus.Pending => "bg-warning",
+   DeliveryServices.Models.OrderItemStatus.Delivered => "bg-success",
+DeliveryServices.Models.OrderItemStatus.Cancelled => "bg-danger",
+              _ => "bg-secondary"
+       };
+
+         <tr>
+      <td><strong>@item.ProductName</strong></td>
+  <td>@(item.ProductDescription ?? "-")</td>
+  <td class="text-end">@item.Quantity</td>
+    <td class="text-end">@item.UnitPrice.ToString("C")</td>
+       <td class="text-end"><strong>@((item.Quantity * item.UnitPrice).ToString("C"))</strong></td>
+     <td><span class="badge @itemStatusBadge">@item.Status</span></td>
+   </tr>
+       }
+     </tbody>
+        <tfoot class="table-light">
+  <tr>
+     <td colspan="4" class="text-end fw-bold">Subtotal:</td>
+  <td class="text-end"><h5 class="mb-0">@Model.SubTotal.ToString("C")</h5></td>
+  <td></td>
+  </tr>
+    <tr>
+    <td colspan="4" class="text-end fw-bold">Delivery Fee:</td>
+     <td class="text-end"><h5 class="mb-0 text-info">@Model.DeliveryFee.ToString("C")</h5></td>
+  <td></td>
+    </tr>
+  <tr>
+   <td colspan="4" class="text-end fw-bold">Total:</td>
+      <td class="text-end"><h4 class="mb-0 text-success">@Model.Total.ToString("C")</h4></td>
+     <td></td>
+   </tr>
+   </tfoot>
+        </table>
+  </div>
+     }
+   else
+  {
+      <div class="text-center py-5 text-secondary">
+    <p>No items in this order</p>
+    </div>
+ }
+    </div>
+ </div>
+    </div>
+
+<!-- Order Status & Details -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+   <div class="card-header bg-transparent border-bottom">
+        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Order Status</h6>
+     </div>
+      <div class="card-body">
+    @{
+     var statusBadge = Model.Status switch
+      {
+       DeliveryServices.Models.OrderStatus.Pending => "bg-warning",
+   DeliveryServices.Models.OrderStatus.PickedUp => "bg-info",
+       DeliveryServices.Models.OrderStatus.InTransit => "bg-primary",
+        DeliveryServices.Models.OrderStatus.Delivered => "bg-success",
+      DeliveryServices.Models.OrderStatus.Cancelled => "bg-danger",
+   _ => "bg-secondary"
+       };
+  }
+   <div class="text-center mb-3 pb-3 border-bottom">
+     <span class="badge @statusBadge fs-5">@Model.Status</span>
+       </div>
+
+    <div class="mb-3">
+     <label class="small text-secondary">Order ID</label>
+  <p class="mb-0"><strong>#@Model.Id</strong></p>
+        </div>
+
+    <div class="mb-3">
+    <label class="small text-secondary">Created At</label>
+        <p class="mb-0">@Model.CreatedAt.ToString("MMM dd, yyyy HH:mm")</p>
+            </div>
+
+     @if (Model.DeliveredAt.HasValue)
+  {
+         <div class="mb-3">
+   <label class="small text-secondary">Delivered At</label>
+   <p class="mb-0">@Model.DeliveredAt.Value.ToString("MMM dd, yyyy HH:mm")</p>
+         </div>
+     }
+
+    <div class="mb-3">
+   <label class="small text-secondary">Total Items</label>
+     <p class="mb-0">@Model.Items.Count items</p>
+  </div>
+
+      @if (Model.DeliveredItemsCount > 0)
+       {
+     <div class="mb-2">
+ <span class="badge bg-success">@Model.DeliveredItemsCount Delivered</span>
+   </div>
+     }
+
+     @if (Model.PendingItemsCount > 0)
+        {
+      <div class="mb-2">
+        <span class="badge bg-warning">@Model.PendingItemsCount Pending</span>
+    </div>
+      }
+
+                @if (Model.CancelledItemsCount > 0)
+  {
+     <div class="mb-2">
+  <span class="badge bg-danger">@Model.CancelledItemsCount Cancelled</span>
+    </div>
+    }
+          </div>
+   </div>
+
+   <div class="card border-0 shadow-sm">
+    <div class="card-header bg-transparent border-bottom">
+  <h6 class="mb-0"><i class="bi bi-currency-dollar"></i> Financial Summary</h6>
+      </div>
+       <div class="card-body">
+       <div class="d-flex justify-content-between mb-2">
+   <span class="text-secondary">Subtotal</span>
+     <strong>@Model.SubTotal.ToString("C")</strong>
+        </div>
+  <small class="text-muted d-block mb-3">(Your earnings from delivered items)</small>
+
+     <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+ <span class="text-secondary">Delivery Fee</span>
+      <span class="text-info">@Model.DeliveryFee.ToString("C")</span>
+   </div>
+
+    <div class="d-flex justify-content-between">
+      <span class="fw-bold fs-5">Total Order Value</span>
+    <h4 class="mb-0 text-success">@Model.Total.ToString("C")</h4>
+   </div>
+   </div>
+        </div>
+    </div>
+</div>

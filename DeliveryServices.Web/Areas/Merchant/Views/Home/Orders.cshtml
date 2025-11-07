@@ -1,0 +1,93 @@
+@model IEnumerable<DeliveryServices.Models.Orders>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+ <div>
+     <h2 class="mb-1">My Orders</h2>
+   <p class="text-secondary mb-0">Track all your delivery orders</p>
+   </div>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+     <div class="table-responsive">
+     <table class="table table-hover align-middle">
+   <thead class="table-light">
+   <tr>
+  <th>Order ID</th>
+    <th>Customer</th>
+    <th>Phone</th>
+<th>Address</th>
+   <th>Items</th>
+     <th class="text-end">Total</th>
+   <th>Status</th>
+    <th>Date</th>
+      <th>Actions</th>
+       </tr>
+     </thead>
+    <tbody>
+       @foreach (var order in Model)
+     {
+      var statusBadge = order.Status switch
+    {
+         DeliveryServices.Models.OrderStatus.Pending => "bg-warning",
+DeliveryServices.Models.OrderStatus.PickedUp => "bg-info",
+ DeliveryServices.Models.OrderStatus.InTransit => "bg-primary",
+      DeliveryServices.Models.OrderStatus.Delivered => "bg-success",
+       DeliveryServices.Models.OrderStatus.Cancelled => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+ <tr>
+    <td><strong class="text-primary">#@order.Id</strong></td>
+       <td>@order.CustomerName</td>
+   <td>@order.CustomerPhone</td>
+  <td>
+      <span class="d-inline-block text-truncate" style="max-width: 150px;" title="@order.CustomerAddress">
+@order.CustomerAddress
+      </span>
+   </td>
+   <td>
+       <span class="badge bg-secondary">@order.Items.Count</span>
+   @if (order.DeliveredItemsCount > 0)
+        {
+ <span class="badge bg-success">@order.DeliveredItemsCount delivered</span>
+       }
+    @if (order.CancelledItemsCount > 0)
+        {
+  <span class="badge bg-danger">@order.CancelledItemsCount cancelled</span>
+     }
+        </td>
+     <td class="text-end"><strong>@order.Total.ToString("C")</strong></td>
+   <td><span class="badge @statusBadge">@order.Status</span></td>
+ <td class="text-secondary small">
+ @order.CreatedAt.ToString("MMM dd, yyyy")<br />
+        <small>@order.CreatedAt.ToString("HH:mm")</small>
+      </td>
+     <td>
+   <a href="@Url.Action("OrderDetails", "Home", new { id = order.Id, area = "Merchant" })" 
+  class="btn btn-sm btn-outline-primary">
+   <i class="bi bi-eye"></i> View
+        </a>
+     </td>
+  </tr>
+     }
+ </tbody>
+     </table>
+ </div>
+        }
+        else
+ {
+  <div class="text-center py-5 text-secondary">
+    <i class="bi bi-inbox display-4"></i>
+       <p class="mt-2">No orders found</p>
+        </div>
+ }
+    </div>
+</div>

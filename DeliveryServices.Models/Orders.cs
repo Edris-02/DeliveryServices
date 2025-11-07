@@ -33,6 +33,10 @@ namespace DeliveryServices.Models
         public int? MerchantId { get; set; }
         public virtual Merchants? Merchant { get; set; }
 
+        // Link to Driver (who delivers the order)
+        public int? DriverId { get; set; }
+        public virtual Driver? Driver { get; set; }
+
         // Delivery fee charged for this order
         [Range(0, double.MaxValue)]
         public decimal DeliveryFee { get; set; } = 0m;

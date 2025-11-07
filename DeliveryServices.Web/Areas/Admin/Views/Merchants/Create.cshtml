@@ -6,63 +6,88 @@
 @section PageHeader {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 class="mb-1">Create Merchant</h2>
-            <p class="text-secondary mb-0">Add a new merchant partner</p>
-        </div>
+  <h2 class="mb-1">Create Merchant</h2>
+    <p class="text-secondary mb-0">Add a new merchant partner</p>
+     </div>
         <a href="@Url.Action("Index", "Merchants", new { area = "Admin" })" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Back
-        </a>
+    </a>
     </div>
 }
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card border-0 shadow-sm">
+     <div class="card border-0 shadow-sm">
             <div class="card-body p-4">
                 <form method="post" asp-action="Create" asp-controller="Merchants">
-                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+  <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="Name" class="form-label">Merchant Name</label>
-                        <input asp-for="Name" class="form-control" placeholder="Enter merchant name" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
-                    </div>
+          <div class="mb-3">
+       <label asp-for="Name" class="form-label">Merchant Name</label>
+            <input asp-for="Name" class="form-control" placeholder="Enter merchant/business name" />
+       <span asp-validation-for="Name" class="text-danger"></span>
+          </div>
 
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
-                        <input asp-for="PhoneNumber" class="form-control" placeholder="Enter phone number" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-                    </div>
+         <div class="row g-3 mb-3">
+           <div class="col-md-6">
+            <label asp-for="Email" class="form-label">Email</label>
+     <input asp-for="Email" class="form-control" placeholder="merchant@example.com" />
+           <span asp-validation-for="Email" class="text-danger"></span>
+                 <small class="text-muted">This will be used for login</small>
+ </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Phone" class="form-label">Alternate Phone (optional)</label>
-                        <input asp-for="Phone" class="form-control" placeholder="Enter alternate phone (optional)" />
-                        <span class="form-text">Optional secondary phone.</span>
-                        <span asp-validation-for="Phone" class="text-danger"></span>
-                    </div>
+          <div class="col-md-6">
+    <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+    <input asp-for="PhoneNumber" class="form-control" placeholder="(123) 456-7890" />
+          <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+ </div>
+      </div>
 
-                    <div class="mb-4">
-                        <label asp-for="Address" class="form-label">Address</label>
-                        <textarea asp-for="Address" class="form-control" rows="3" placeholder="Enter complete address"></textarea>
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
+         <div class="mb-3">
+<label asp-for="Phone" class="form-label">Alternate Phone (optional)</label>
+      <input asp-for="Phone" class="form-control" placeholder="Secondary contact number (optional)" />
+ <span class="form-text">Optional secondary phone.</span>
+    <span asp-validation-for="Phone" class="text-danger"></span>
+       </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check-circle"></i> Create Merchant
-                        </button>
-                        <a href="@Url.Action("Index", "Merchants", new { area = "Admin" })" class="btn btn-outline-secondary">
-                            Cancel
-                        </a>
-                    </div>
+      <div class="mb-4">
+   <label asp-for="Address" class="form-label">Address</label>
+            <textarea asp-for="Address" class="form-control" rows="3" placeholder="Enter complete business address"></textarea>
+           <span asp-validation-for="Address" class="text-danger"></span>
+      </div>
+
+    <!-- Info Box -->
+         <div class="alert alert-info">
+             <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Automatic User Account Creation</h6>
+       <p class="mb-0 small">
+             A user account will be automatically created for this merchant with:
+      </p>
+         <ul class="mb-0 small mt-2">
+        <li>Username: <strong>Email address</strong></li>
+   <li>Password: <strong>FirstName@123</strong> (e.g., ABC@123)</li>
+         <li>Role: <strong>Merchant</strong></li>
+                  </ul>
+<p class="mb-0 small mt-2 text-muted">
+     The merchant can login immediately with these credentials.
+     </p>
+   </div>
+
+        <div class="d-flex gap-2">
+       <button type="submit" class="btn btn-primary">
+    <i class="bi bi-check-circle"></i> Create Merchant
+    </button>
+              <a href="@Url.Action("Index", "Merchants", new { area = "Admin" })" class="btn btn-outline-secondary">
+   Cancel
+        </a>
+         </div>
                 </form>
-            </div>
+        </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

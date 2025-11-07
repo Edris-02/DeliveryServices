@@ -18,12 +18,16 @@ namespace DeliveryServices.DataAccess.Repository
             OrderItem = new OrderItemRepository(_db);
             Order = new OrderRepository(_db);
             MerchantPayout = new MerchantPayoutRepository(_db);
+            Driver = new DriverRepository(_db);
+            DriverSalaryPayment = new DriverSalaryPaymentRepository(_db);
         }
 
         public IMerchantRepository Merchant { get; private set; }
         public IOrderItemRepository OrderItem { get; private set; }
         public IOrderRepository Order { get; private set; }
         public IMerchantPayoutRepository MerchantPayout { get; private set; }
+        public IDriverRepository Driver { get; private set; }
+        public IDriverSalaryPaymentRepository DriverSalaryPayment { get; private set; }
 
         public void Save()
         {

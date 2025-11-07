@@ -1,0 +1,180 @@
+@model DeliveryServices.Models.DriverSalaryPayment
+@{
+    var driver = ViewBag.Driver as DeliveryServices.Models.Driver;
+    ViewData["Title"] = $"Pay Salary - {driver?.FullName}";
+}
+
+@section PageHeader {
+    <div class="mb-4">
+   <nav aria-label="breadcrumb">
+       <ol class="breadcrumb mb-2">
+   <li class="breadcrumb-item"><a asp-action="Index">Drivers</a></li>
+   <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@driver?.Id">@driver?.FullName</a></li>
+     <li class="breadcrumb-item active">Pay Salary</li>
+  </ol>
+        </nav>
+     <h1 class="h3 mb-0">Process Salary Payment</h1>
+        <p class="text-muted mb-0">Pay salary to @driver?.FullName</p>
+    </div>
+}
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Driver Summary Card -->
+  <div class="card mb-4">
+   <div class="card-body">
+             <div class="d-flex align-items-center mb-3">
+  <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(driver?.FullName ?? "")&background=2563eb&color=fff&size=64"
+        alt="@driver?.FullName"
+              class="rounded-circle me-3"
+      width="64"
+     height="64" />
+    <div>
+            <h4 class="mb-1">@driver?.FullName</h4>
+ <p class="text-muted mb-0">
+    <i class="bi bi-envelope"></i> @driver?.Email |
+<i class="bi bi-telephone"></i> @driver?.PhoneNumber
+          </p>
+         </div>
+        </div>
+
+   <hr />
+
+     <div class="row g-3">
+     <div class="col-md-3">
+   <small class="text-muted">Total Deliveries</small>
+       <h5 class="mb-0">@driver?.TotalDeliveries</h5>
+     </div>
+         <div class="col-md-3">
+  <small class="text-muted">This Month</small>
+    <h5 class="mb-0 text-primary">@driver?.CurrentMonthDeliveries</h5>
+     </div>
+          <div class="col-md-3">
+       <small class="text-muted">Total Paid</small>
+     <h5 class="mb-0 text-success">@driver?.TotalEarnings.ToString("N2")</h5>
+         </div>
+    <div class="col-md-3">
+  <small class="text-muted">Current Balance</small>
+        <h5 class="mb-0 text-warning">@driver?.CurrentBalance.ToString("N2")</h5>
+         </div>
+  </div>
+    </div>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="card">
+     <div class="card-header bg-white">
+    <h5 class="mb-0"><i class="bi bi-cash-stack"></i> Payment Details</h5>
+   </div>
+  <div class="card-body p-4">
+   <form asp-action="PaySalary" method="post">
+    <input type="hidden" asp-for="DriverId" />
+    <input type="hidden" asp-for="PaymentDate" />
+    <input type="hidden" asp-for="PeriodStart" />
+    <input type="hidden" asp-for="PeriodEnd" />
+
+          <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+   <!-- Payment Breakdown -->
+          <div class="alert alert-light border mb-4">
+     <h6 class="mb-3"><i class="bi bi-calculator"></i> Payment Breakdown</h6>
+    <div class="row g-3">
+          <div class="col-md-6">
+     <label class="text-muted small">Period</label>
+      <div>
+   <strong>
+       @Model.PeriodStart.ToString("MMM dd, yyyy") - 
+         @Model.PeriodEnd.ToString("MMM dd, yyyy")
+       </strong>
+     </div>
+     </div>
+     <div class="col-md-6">
+<label class="text-muted small">Deliveries in Period</label>
+<div><strong class="text-primary">@Model.DeliveriesCount deliveries</strong></div>
+        </div>
+      <div class="col-md-6">
+      <label class="text-muted small">Base Salary Portion</label>
+   <div><strong>@Model.BaseSalaryPortion.ToString("N2")</strong></div>
+    <small class="text-muted">(@driver?.BaseSalary.ToString("N2") / 12 months)</small>
+     </div>
+          <div class="col-md-6">
+        <label class="text-muted small">Commission</label>
+       <div><strong class="text-success">@Model.CommissionPortion.ToString("N2")</strong></div>
+ <small class="text-muted">(@Model.DeliveriesCount × @driver?.CommissionPerDelivery.ToString("N2"))</small>
+ </div>
+        </div>
+            <hr />
+  <div class="row">
+     <div class="col-md-12">
+     <label class="text-muted small">Total Payment Amount</label>
+    <h3 class="mb-0 text-success">@Model.Amount.ToString("N2")</h3>
+      </div>
+       </div>
+           </div>
+
+  <!-- Payment Amount -->
+   <div class="mb-3">
+        <label asp-for="Amount" class="form-label">Payment Amount</label>
+     <div class="input-group">
+<input asp-for="Amount" class="form-control form-control-lg" readonly />
+      </div>
+            <span asp-validation-for="Amount" class="text-danger small"></span>
+     <small class="text-muted">
+      Maximum: @driver?.CurrentBalance.ToString("N2") (Current Balance)
+  </small>
+           </div>
+
+          <!-- Payment Method -->
+ <div class="row g-3 mb-3">
+   <div class="col-md-6">
+       <label asp-for="PaymentMethod" class="form-label">Payment Method</label>
+      <select asp-for="PaymentMethod" class="form-select">
+                <option value="">Select method</option>
+     <option value="Cash">Cash</option>
+         <option value="Bank Transfer">Bank Transfer</option>
+     <option value="Check">Check</option>
+         <option value="Mobile Money">Mobile Money</option>
+    <option value="Other">Other</option>
+      </select>
+   </div>
+
+    <div class="col-md-6">
+     <label asp-for="TransactionReference" class="form-label">Transaction Reference</label>
+     <input asp-for="TransactionReference" class="form-control" placeholder="e.g., TXN123456" />
+          </div>
+       </div>
+
+    <!-- Notes -->
+    <div class="mb-4">
+       <label asp-for="Notes" class="form-label">Notes</label>
+        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Optional payment notes"></textarea>
+</div>
+
+     <!-- Info Alert -->
+                <div class="alert alert-info">
+      <h6 class="alert-heading"><i class="bi bi-info-circle"></i> What happens after payment?</h6>
+   <ul class="mb-0 small">
+            <li>Current balance will be reduced by @Model.Amount.ToString("N2")</li>
+           <li>Total earnings will increase by @Model.Amount.ToString("N2")</li>
+   <li>Monthly delivery counter will be reset to 0</li>
+     <li>Payment record will be saved in history</li>
+    </ul>
+       </div>
+
+   <div class="d-flex gap-2 justify-content-end mt-4">
+       <a asp-action="Details" asp-route-id="@driver?.Id" class="btn btn-outline-secondary btn-lg">
+   <i class="bi bi-x-circle"></i> Cancel
+           </a>
+   <button type="submit" class="btn btn-success btn-lg">
+     <i class="bi bi-check-circle"></i> Process Payment (@Model.Amount.ToString("N2"))
+   </button>
+          </div>
+ </form>
+   </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Edit Order";
     var merchants = ViewBag.Merchants as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>;
+    var drivers = ViewBag.Drivers as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>;
 }
 
 @section PageHeader {
@@ -36,19 +37,37 @@
                     
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                    <div class="mb-3">
-                        <label asp-for="MerchantId" class="form-label">Merchant <span class="text-danger">*</span></label>
-                        <select asp-for="MerchantId" class="form-select" required>
-                            <option value="">-- Select Merchant --</option>
-                            @if (merchants != null)
-                            {
-                                @foreach (var merchant in merchants)
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="MerchantId" class="form-label">Merchant <span class="text-danger">*</span></label>
+                            <select asp-for="MerchantId" class="form-select" required>
+                                <option value="">-- Select Merchant --</option>
+                                @if (merchants != null)
                                 {
-                                    <option value="@merchant.Value" selected="@merchant.Selected">@merchant.Text</option>
+                                    @foreach (var merchant in merchants)
+                                    {
+                                        <option value="@merchant.Value" selected="@merchant.Selected">@merchant.Text</option>
+                                    }
                                 }
-                            }
-                        </select>
-                        <span asp-validation-for="MerchantId" class="text-danger"></span>
+                            </select>
+                            <span asp-validation-for="MerchantId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="DriverId" class="form-label">Assign Driver</label>
+                            <select asp-for="DriverId" class="form-select">
+                                <option value="">-- No Driver Assigned --</option>
+                                @if (drivers != null)
+                                {
+                                    @foreach (var driver in drivers)
+                                    {
+                                        <option value="@driver.Value" selected="@driver.Selected">@driver.Text</option>
+                                    }
+                                }
+                            </select>
+                            <small class="text-muted">Select a driver to deliver this order</small>
+                            <span asp-validation-for="DriverId" class="text-danger"></span>
+                        </div>
                     </div>
 
                     <div class="mb-3">
@@ -81,7 +100,7 @@
                     @if (Model.Status == DeliveryServices.Models.OrderStatus.Delivered)
                     {
                         <div class="alert alert-warning">
-                            <i class="bi bi-exclamation-triangle"></i> <strong>Warning:</strong> This order has been delivered. Changing the merchant or amounts may affect merchant balances.
+                            <i class="bi bi-exclamation-triangle"></i> <strong>Warning:</strong> This order has been delivered. Changing the merchant, driver, or amounts may affect balances and statistics.
                         </div>
                     }
 

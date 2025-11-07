@@ -1,0 +1,10 @@
+@model DeliveryServices.Models.ApplicationUser
+
+@if (Model != null)
+{
+    <span class="d-none d-sm-inline">@Model.FullName</span>
+}
+else
+{
+    <span class="d-none d-sm-inline">User</span>
+}

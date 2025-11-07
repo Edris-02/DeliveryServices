@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using DeliveryServices.DataAccess.Repository.IRepository;
 using DeliveryServices.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace DeliveryServices.Web.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = UserRoles.Admin)]
     public class OrdersController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

@@ -1,0 +1,63 @@
+@model IEnumerable<DeliveryServices.Models.MerchantPayouts>
+@{
+    ViewData["Title"] = "Payout History";
+}
+
+@section PageHeader {
+    <div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+       <h2 class="mb-1">Payout History</h2>
+         <p class="text-secondary mb-0">View all payments received</p>
+ </div>
+  </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+  @if (Model.Any())
+  {
+     <div class="table-responsive">
+      <table class="table table-hover align-middle">
+       <thead class="table-light">
+      <tr>
+       <th>Payout ID</th>
+       <th class="text-end">Amount</th>
+      <th>Payment Method</th>
+      <th>Paid At</th>
+       <th>Processed By</th>
+     <th>Notes</th>
+    </tr>
+  </thead>
+      <tbody>
+  @foreach (var payout in Model)
+         {
+       <tr>
+   <td><strong>#@payout.Id</strong></td>
+      <td class="text-end"><strong class="text-success">@payout.Amount.ToString("C")</strong></td>
+       <td>@(payout.PaymentMethod ?? "-")</td>
+   <td>@payout.PaidAt.ToString("MMM dd, yyyy HH:mm")</td>
+       <td>@(payout.ProcessedBy ?? "-")</td>
+    <td>@(payout.Notes ?? "-")</td>
+   </tr>
+      }
+     </tbody>
+      <tfoot class="table-light">
+       <tr>
+   <td class="fw-bold">Total Received:</td>
+     <td class="text-end"><h5 class="mb-0 text-success">@Model.Sum(p => p.Amount).ToString("C")</h5></td>
+    <td colspan="4"></td>
+  </tr>
+       </tfoot>
+      </table>
+  </div>
+  }
+  else
+  {
+     <div class="text-center py-5 text-secondary">
+       <i class="bi bi-cash-stack display-4"></i>
+      <p class="mt-2">No payouts yet</p>
+        <small>Payouts will appear here once processed by admin</small>
+      </div>
+   }
+    </div>
+</div>

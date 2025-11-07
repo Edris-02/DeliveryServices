@@ -12,6 +12,8 @@ namespace DeliveryServices.DataAccess.Repository.IRepository
         IOrderItemRepository OrderItem { get; }
         IOrderRepository Order { get; }
         IMerchantPayoutRepository MerchantPayout { get; }
+        IDriverRepository Driver { get; }
+        IDriverSalaryPaymentRepository DriverSalaryPayment { get; }
         void Save();
     }
 }

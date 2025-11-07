@@ -22,6 +22,11 @@ namespace DeliveryServices.Models
         [Phone]
         public string PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress]
+        [StringLength(100)]
+        public string Email { get; set; }
+
         [Required(ErrorMessage = "Address is required.")]
         [StringLength(250)]
         public string Address { get; set; }
@@ -31,6 +36,10 @@ namespace DeliveryServices.Models
 
         // Total amount paid to merchant historically
         public decimal TotalPaidOut { get; set; } = 0m;
+
+        // Link to ApplicationUser account
+        public string? UserId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
 
         // Navigation properties
         public virtual ICollection<Orders> Orders { get; set; } = new List<Orders>();
