@@ -69,6 +69,10 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
                 {
                     return RedirectToAction("Index", "Home", new { area = "Merchant" });
                 }
+                else if (roles.Contains(UserRoles.Driver))
+                {
+                    return RedirectToAction("Index", "Home", new { area = "Driver" });
+                }
 
                 return RedirectToLocal(returnUrl);
             }
@@ -193,8 +197,21 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             {
                 return Redirect(returnUrl);
             }
-            // Default redirect to merchant home for authenticated users
-            return RedirectToAction("Index", "Home", new { area = "Merchant" });
+            
+            // Default redirect based on user role
+          if (User.IsInRole(UserRoles.Admin))
+        {
+          return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+     }
+         else if (User.IsInRole(UserRoles.Driver))
+  {
+      return RedirectToAction("Index", "Home", new { area = "Driver" });
+            }
+   else
+            {
+                // Default to merchant home for authenticated users
+   return RedirectToAction("Index", "Home", new { area = "Merchant" });
+}
         }
     }
 }

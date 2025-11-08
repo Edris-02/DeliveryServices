@@ -1,0 +1,164 @@
+@model DeliveryServices.Models.Driver
+@{
+    ViewData["Title"] = "My Profile";
+    var user = ViewBag.User as DeliveryServices.Models.ApplicationUser;
+}
+
+@section PageHeader {
+    <div class="mb-4">
+   <nav aria-label="breadcrumb">
+       <ol class="breadcrumb mb-2">
+         <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+      <li class="breadcrumb-item active">Profile</li>
+   </ol>
+ </nav>
+        <h1 class="h3 mb-0">My Profile</h1>
+        <p class="text-muted mb-0">View your driver information</p>
+    </div>
+}
+
+<div class="row g-4">
+    <!-- Profile Information -->
+    <div class="col-lg-8">
+   <div class="card border-0 shadow-sm mb-4">
+ <div class="card-header bg-white border-bottom">
+      <h5 class="mb-0"><i class="bi bi-person-circle text-primary"></i> Personal Information</h5>
+   </div>
+ <div class="card-body">
+      <div class="row g-3">
+   <div class="col-md-6">
+    <label class="text-muted small">Full Name</label>
+            <p class="mb-0"><strong>@Model.FullName</strong></p>
+ </div>
+  <div class="col-md-6">
+         <label class="text-muted small">Email</label>
+       <p class="mb-0"><strong>@Model.Email</strong></p>
+ </div>
+     <div class="col-md-6">
+          <label class="text-muted small">Phone Number</label>
+  <p class="mb-0"><strong>@Model.PhoneNumber</strong></p>
+  </div>
+     <div class="col-md-6">
+        <label class="text-muted small">Address</label>
+      <p class="mb-0">@(Model.Address ?? "Not provided")</p>
+    </div>
+       <div class="col-md-6">
+   <label class="text-muted small">License Number</label>
+  <p class="mb-0">@(Model.LicenseNumber ?? "Not provided")</p>
+      </div>
+ <div class="col-md-6">
+       <label class="text-muted small">Status</label>
+     <p class="mb-0">
+         @if (Model.IsActive)
+    {
+        <span class="badge bg-success">Active</span>
+  }
+   else
+       {
+         <span class="badge bg-danger">Inactive</span>
+     }
+ </p>
+   </div>
+   </div>
+     </div>
+ </div>
+
+  <!-- Vehicle Information -->
+        <div class="card border-0 shadow-sm">
+ <div class="card-header bg-white border-bottom">
+           <h5 class="mb-0"><i class="bi bi-truck text-primary"></i> Vehicle Information</h5>
+      </div>
+      <div class="card-body">
+<div class="row g-3">
+      <div class="col-md-6">
+  <label class="text-muted small">Vehicle Type</label>
+    <p class="mb-0">@(Model.VehicleType ?? "Not provided")</p>
+ </div>
+     <div class="col-md-6">
+ <label class="text-muted small">Vehicle Plate Number</label>
+    <p class="mb-0">@(Model.VehiclePlateNumber ?? "Not provided")</p>
+       </div>
+ </div>
+      </div>
+        </div>
+    </div>
+
+    <!-- Statistics Sidebar -->
+    <div class="col-lg-4">
+   <!-- Profile Summary -->
+    <div class="card border-0 shadow-sm mb-4 text-center">
+      <div class="card-body">
+       <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=2563eb&color=fff&size=128"
+   alt="@Model.FullName"
+   class="rounded-circle mb-3"
+   width="128"
+     height="128" />
+   <h4 class="mb-1">@Model.FullName</h4>
+    <p class="text-muted mb-3">@Model.Email</p>
+    @if (Model.IsActive)
+   {
+    <span class="badge bg-success mb-3">Active Driver</span>
+      }
+ else
+      {
+       <span class="badge bg-danger mb-3">Inactive</span>
+ }
+     <p class="text-muted small mb-0">
+        <i class="bi bi-calendar"></i> Joined: @Model.JoinedDate.ToString("MMM dd, yyyy")
+      </p>
+  </div>
+      </div>
+
+  <!-- Earnings Information -->
+        <div class="card border-0 shadow-sm mb-4">
+     <div class="card-header bg-white border-bottom">
+     <h6 class="mb-0"><i class="bi bi-cash-stack text-success"></i> Earnings</h6>
+ </div>
+      <div class="card-body">
+      <div class="mb-3">
+      <label class="text-muted small">Current Balance</label>
+      <h4 class="mb-0 text-success">@Model.CurrentBalance.ToString("N2")</h4>
+      </div>
+      <div class="mb-3">
+   <label class="text-muted small">Total Earnings</label>
+          <h4 class="mb-0 text-primary">@Model.TotalEarnings.ToString("N2")</h4>
+      </div>
+    <hr />
+      <div class="mb-2">
+   <label class="text-muted small">Base Salary</label>
+         <p class="mb-0">@Model.BaseSalary.ToString("N2") /year</p>
+    </div>
+     <div>
+    <label class="text-muted small">Commission per Delivery</label>
+      <p class="mb-0">@Model.CommissionPerDelivery.ToString("N2")</p>
+ </div>
+      </div>
+ </div>
+
+   <!-- Delivery Statistics -->
+     <div class="card border-0 shadow-sm">
+      <div class="card-header bg-white border-bottom">
+   <h6 class="mb-0"><i class="bi bi-graph-up text-info"></i> Statistics</h6>
+    </div>
+       <div class="card-body">
+  <div class="mb-3">
+  <label class="text-muted small">Total Deliveries</label>
+   <h4 class="mb-0 text-primary">@Model.TotalDeliveries</h4>
+      </div>
+       <div class="mb-3">
+      <label class="text-muted small">This Month Deliveries</label>
+    <h4 class="mb-0 text-info">@Model.CurrentMonthDeliveries</h4>
+       </div>
+<div>
+         <label class="text-muted small">Average Per Delivery</label>
+       <h4 class="mb-0 text-success">@Model.AverageEarningsPerDelivery.ToString("N2")</h4>
+   </div>
+  </div>
+   </div>
+    </div>
+</div>
+
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> 
+    <strong>Note:</strong> To update your profile information, please contact the administrator.
+</div>

@@ -1,0 +1,84 @@
+@model IEnumerable<DeliveryServices.Models.Orders>
+@{
+    ViewData["Title"] = "My Deliveries";
+}
+
+@section PageHeader {
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+         <ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a asp-action="Index">Dashboard</a></li>
+                <li class="breadcrumb-item active">Deliveries</li>
+            </ol>
+      </nav>
+        <h1 class="h3 mb-0">My Deliveries</h1>
+        <p class="text-muted mb-0">Manage your assigned delivery orders</p>
+    </div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        @if (Model.Any())
+        {
+      <div class="table-responsive">
+ <table class="table table-hover align-middle">
+      <thead class="table-light">
+      <tr>
+       <th>Order ID</th>
+                <th>Customer</th>
+             <th>Merchant</th>
+      <th>Delivery Address</th>
+         <th>Total</th>
+  <th>Status</th>
+       <th>Created</th>
+    <th>Actions</th>
+      </tr>
+                </thead>
+    <tbody>
+       @foreach (var order in Model)
+        {
+           var statusBadge = order.Status switch
+         {
+         DeliveryServices.Models.OrderStatus.Pending => "bg-warning",
+         DeliveryServices.Models.OrderStatus.PickedUp => "bg-info",
+          DeliveryServices.Models.OrderStatus.InTransit => "bg-primary",
+DeliveryServices.Models.OrderStatus.Delivered => "bg-success",
+     DeliveryServices.Models.OrderStatus.Cancelled => "bg-danger",
+          _ => "bg-secondary"
+};
+
+       <tr>
+                <td><strong>#@order.Id</strong></td>
+     <td>
+         <div>@order.CustomerName</div>
+    <small class="text-muted">@order.CustomerPhone</small>
+              </td>
+         <td>@order.Merchant?.Name</td>
+             <td class="small">@order.CustomerAddress</td>
+           <td><strong>@order.Total.ToString("N2")</strong></td>
+    <td><span class="badge @statusBadge">@order.Status</span></td>
+    <td class="text-secondary small">@order.CreatedAt.ToString("yyyy/MM/dd HH:mm")</td>
+       <td>
+  <a href="@Url.Action("DeliveryDetails", "Home", new { id = order.Id })" 
+  class="btn btn-sm btn-outline-primary">
+               <i class="bi bi-eye"></i> View
+        </a>
+       </td>
+    </tr>
+      }
+   </tbody>
+    </table>
+    </div>
+        }
+        else
+ {
+ <div class="text-center py-5 text-secondary">
+                <i class="bi bi-inbox display-4"></i>
+          <p class="mt-3">No deliveries assigned yet</p>
+      <a asp-action="Index" class="btn btn-outline-primary mt-2">
+      <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+            </div>
+        }
+    </div>
+</div>

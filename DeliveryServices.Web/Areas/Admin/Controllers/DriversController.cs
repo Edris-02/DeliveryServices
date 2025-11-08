@@ -51,7 +51,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         // POST: Drivers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Driver driver)
+        public async Task<IActionResult> Create(Models.Driver driver)
         {
             ModelState.Remove("Orders");
             ModelState.Remove("SalaryPayments");
@@ -134,7 +134,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         // POST: Drivers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Driver driver)
+        public IActionResult Edit(Models.Driver driver)
         {
             ModelState.Remove("Orders");
             ModelState.Remove("SalaryPayments");
