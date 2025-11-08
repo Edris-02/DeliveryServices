@@ -12,24 +12,22 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-   public ReportsController(IUnitOfWork unitOfWork)
+        public ReportsController(IUnitOfWork unitOfWork)
         {
-       _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
             var viewModel = new ReportsViewModel();
-        var today = DateTime.UtcNow.Date;
-    var startOfMonth = new DateTime(today.Year, today.Month, 1);
-          var startOfYear = new DateTime(today.Year, 1, 1);
+            var today = DateTime.UtcNow.Date;
+            var startOfMonth = new DateTime(today.Year, today.Month, 1);
+            var startOfYear = new DateTime(today.Year, 1, 1);
 
-  // Get all orders with related data
-  var allOrders = _unitOfWork.Order.GetAll(includeProperties: "Items,Driver,Merchant").ToList();
-         var allMerchants = _unitOfWork.Merchant.GetAll(includeProperties: "Orders").ToList();
-    var allDrivers = _unitOfWork.Driver.GetAll(includeProperties: "Orders").ToList();
+            var allOrders = _unitOfWork.Order.GetAll(includeProperties: "Items,Driver,Merchant").ToList();
+            var allMerchants = _unitOfWork.Merchant.GetAll(includeProperties: "Orders").ToList();
+            var allDrivers = _unitOfWork.Driver.GetAll(includeProperties: "Orders").ToList();
 
-     // Revenue Reports (Delivery Fees only)
             viewModel.TodayRevenue = allOrders
 .Where(o => o.CreatedAt.Date == today && o.Status == OrderStatus.Delivered)
      .Sum(o => o.DeliveryFee);
@@ -38,98 +36,88 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
       .Where(o => o.CreatedAt >= startOfMonth && o.Status == OrderStatus.Delivered)
      .Sum(o => o.DeliveryFee);
 
-     viewModel.YearRevenue = allOrders
-           .Where(o => o.CreatedAt >= startOfYear && o.Status == OrderStatus.Delivered)
-      .Sum(o => o.DeliveryFee);
+            viewModel.YearRevenue = allOrders
+                  .Where(o => o.CreatedAt >= startOfYear && o.Status == OrderStatus.Delivered)
+             .Sum(o => o.DeliveryFee);
 
-      viewModel.TotalRevenue = allOrders
-   .Where(o => o.Status == OrderStatus.Delivered)
-     .Sum(o => o.DeliveryFee);
+            viewModel.TotalRevenue = allOrders
+         .Where(o => o.Status == OrderStatus.Delivered)
+           .Sum(o => o.DeliveryFee);
 
-     // Order Statistics
             viewModel.TotalOrders = allOrders.Count;
-   viewModel.PendingOrders = allOrders.Count(o => o.Status == OrderStatus.Pending);
-         viewModel.InTransitOrders = allOrders.Count(o => o.Status == OrderStatus.InTransit);
+            viewModel.PendingOrders = allOrders.Count(o => o.Status == OrderStatus.Pending);
             viewModel.DeliveredOrders = allOrders.Count(o => o.Status == OrderStatus.Delivered);
-          viewModel.CancelledOrders = allOrders.Count(o => o.Status == OrderStatus.Cancelled);
+            viewModel.CancelledOrders = allOrders.Count(o => o.Status == OrderStatus.Cancelled);
 
-    // Merchant Performance
-    viewModel.TopMerchants = allMerchants
-                .OrderByDescending(m => m.Orders.Count)
-     .Take(5)
-     .Select(m => new MerchantPerformanceDto
+            viewModel.TopMerchants = allMerchants
+                        .OrderByDescending(m => m.Orders.Count)
+             .Take(5)
+             .Select(m => new MerchantPerformanceDto
              {
-        MerchantName = m.Name,
-    TotalOrders = m.Orders.Count,
-   TotalRevenue = m.Orders.Where(o => o.Status == OrderStatus.Delivered).Sum(o => o.Total),
-    AverageOrderValue = m.Orders.Any() ? m.Orders.Average(o => o.Total) : 0
-     })
-     .ToList();
+                 MerchantName = m.Name,
+                 TotalOrders = m.Orders.Count,
+                 TotalRevenue = m.Orders.Where(o => o.Status == OrderStatus.Delivered).Sum(o => o.Total),
+                 AverageOrderValue = m.Orders.Any() ? m.Orders.Average(o => o.Total) : 0
+             })
+             .ToList();
 
- // Driver Performance
-viewModel.TopDrivers = allDrivers
-    .OrderByDescending(d => d.Orders.Count(o => o.Status == OrderStatus.Delivered))
-     .Take(5)
-.Select(d => new DriverPerformanceDto
-         {
-   DriverName = d.FullName,
-   TotalDeliveries = d.Orders.Count(o => o.Status == OrderStatus.Delivered),
- TotalEarnings = d.TotalEarnings,
- AverageDeliveryTime = CalculateAverageDeliveryTime(d.Orders.Where(o => o.Status == OrderStatus.Delivered).ToList())
-      })
- .ToList();
+            viewModel.TopDrivers = allDrivers
+                .OrderByDescending(d => d.Orders.Count(o => o.Status == OrderStatus.Delivered))
+                 .Take(5)
+            .Select(d => new DriverPerformanceDto
+            {
+                DriverName = d.FullName,
+                TotalDeliveries = d.Orders.Count(o => o.Status == OrderStatus.Delivered),
+                TotalEarnings = d.TotalEarnings,
+                AverageDeliveryTime = CalculateAverageDeliveryTime(d.Orders.Where(o => o.Status == OrderStatus.Delivered).ToList())
+            })
+             .ToList();
 
-         // Monthly revenue trend for the last 6 months
-  viewModel.MonthlyRevenueTrend = Enumerable.Range(0, 6)
-     .Select(i => startOfMonth.AddMonths(-i))
- .Reverse()
-      .ToDictionary(
-        month => month.ToString("MMM yyyy"),
-           month => allOrders
-             .Where(o => o.CreatedAt.Year == month.Year && 
-          o.CreatedAt.Month == month.Month && 
-          o.Status == OrderStatus.Delivered)
-   .Sum(o => o.DeliveryFee)
-     );
+            viewModel.MonthlyRevenueTrend = Enumerable.Range(0, 6)
+               .Select(i => startOfMonth.AddMonths(-i))
+           .Reverse()
+                .ToDictionary(
+                  month => month.ToString("MMM yyyy"),
+                     month => allOrders
+                       .Where(o => o.CreatedAt.Year == month.Year &&
+                    o.CreatedAt.Month == month.Month &&
+                    o.Status == OrderStatus.Delivered)
+             .Sum(o => o.DeliveryFee)
+               );
 
-       // Order status distribution
             viewModel.OrdersByStatus = new Dictionary<string, int>
           {
          { "Pending", viewModel.PendingOrders },
-      { "In Transit", viewModel.InTransitOrders },
            { "Delivered", viewModel.DeliveredOrders },
             { "Cancelled", viewModel.CancelledOrders }
      };
 
             return View(viewModel);
-  }
-
-        // Helper method to calculate average delivery time
-        private double CalculateAverageDeliveryTime(List<Orders> deliveredOrders)
-   {
-          if (!deliveredOrders.Any()) return 0;
-
-   var totalMinutes = 0.0;
-    var count = 0;
-
-    foreach (var order in deliveredOrders)
-   {
-          if (order.DeliveredAt.HasValue)
-         {
-    totalMinutes += (order.DeliveredAt.Value - order.CreatedAt).TotalMinutes;
-    count++;
-     }
         }
 
-    return count > 0 ? totalMinutes / count : 0;
-     }
-
-        // Export report as CSV (future enhancement)
-   public IActionResult ExportRevenue()
+        private double CalculateAverageDeliveryTime(List<Orders> deliveredOrders)
         {
-         // TODO: Implement CSV export
-       TempData["info"] = "Export feature coming soon!";
-   return RedirectToAction(nameof(Index));
+            if (!deliveredOrders.Any()) return 0;
+
+            var totalMinutes = 0.0;
+            var count = 0;
+
+            foreach (var order in deliveredOrders)
+            {
+                if (order.DeliveredAt.HasValue)
+                {
+                    totalMinutes += (order.DeliveredAt.Value - order.CreatedAt).TotalMinutes;
+                    count++;
+                }
+            }
+
+            return count > 0 ? totalMinutes / count : 0;
+        }
+
+        public IActionResult ExportRevenue()
+        {
+            TempData["info"] = "Export feature coming soon!";
+            return RedirectToAction(nameof(Index));
         }
     }
 }

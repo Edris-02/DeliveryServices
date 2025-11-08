@@ -17,10 +17,10 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
         private readonly IUnitOfWork _unitOfWork;
 
         public AccountController(
-   UserManager<ApplicationUser> userManager,
-     SignInManager<ApplicationUser> signInManager,
-     RoleManager<IdentityRole> roleManager,
-      IUnitOfWork unitOfWork)
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
+        RoleManager<IdentityRole> roleManager,
+        IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -28,7 +28,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: Login
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -41,7 +40,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             return View();
         }
 
-        // POST: Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
@@ -60,7 +58,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 var roles = await _userManager.GetRolesAsync(user!);
 
-                // Redirect based on role
                 if (roles.Contains(UserRoles.Admin))
                 {
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
@@ -87,7 +84,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             return View(model);
         }
 
-        // GET: Register
         [HttpGet]
         public IActionResult Register()
         {
@@ -99,7 +95,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             return View();
         }
 
-        // POST: Register
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -109,7 +104,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
                 return View(model);
             }
 
-            // Force merchant registration
             model.IsMerchant = true;
 
             var user = new ApplicationUser
@@ -125,10 +119,8 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
 
             if (result.Succeeded)
             {
-                // Ensure roles exist
                 await EnsureRolesExist();
 
-                // Create merchant profile
                 var merchant = new Merchants
                 {
                     Name = model.BusinessName ?? model.FullName,
@@ -141,11 +133,9 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
                 _unitOfWork.Merchant.Add(merchant);
                 _unitOfWork.Save();
 
-                // Update user with MerchantId
                 user.MerchantId = merchant.Id;
                 await _userManager.UpdateAsync(user);
 
-                // Assign Merchant role
                 await _userManager.AddToRoleAsync(user, UserRoles.Merchant);
 
                 TempData["success"] = "Merchant account created successfully! Please login.";
@@ -160,7 +150,6 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             return View(model);
         }
 
-        // POST: Logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -170,14 +159,12 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // GET: Access Denied
         [HttpGet]
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        // Helper method to ensure roles exist
         private async Task EnsureRolesExist()
         {
             string[] roles = { UserRoles.Admin, UserRoles.Merchant, UserRoles.Driver };
@@ -197,21 +184,19 @@ namespace DeliveryServices.Web.Areas.Identity.Controllers
             {
                 return Redirect(returnUrl);
             }
-            
-            // Default redirect based on user role
-          if (User.IsInRole(UserRoles.Admin))
-        {
-          return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-     }
-         else if (User.IsInRole(UserRoles.Driver))
-  {
-      return RedirectToAction("Index", "Home", new { area = "Driver" });
-            }
-   else
+
+            if (User.IsInRole(UserRoles.Admin))
             {
-                // Default to merchant home for authenticated users
-   return RedirectToAction("Index", "Home", new { area = "Merchant" });
-}
+                return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
+            }
+            else if (User.IsInRole(UserRoles.Driver))
+            {
+                return RedirectToAction("Index", "Home", new { area = "Driver" });
+            }
+            else
+            {
+                return RedirectToAction("Index", "Home", new { area = "Merchant" });
+            }
         }
     }
 }

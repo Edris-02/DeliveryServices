@@ -18,14 +18,12 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        // GET: List all payouts
         public IActionResult Index()
         {
             var payouts = _unitOfWork.MerchantPayout.GetAll(includeProperties: "Merchant").ToList();
             return View(payouts);
         }
 
-        // GET: View payout details
         public IActionResult Details(int id)
         {
             var payout = _unitOfWork.MerchantPayout.Get(p => p.Id == id, includeProperties: "Merchant");
@@ -36,7 +34,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return View(payout);
         }
 
-        // GET: Create payout (from merchant details page)
         public IActionResult Create(int merchantId)
         {
             var merchant = _unitOfWork.Merchant.Get(m => m.Id == merchantId, includeProperties: "Orders,Payouts");
@@ -54,7 +51,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             var model = new MerchantPayouts
             {
                 MerchantId = merchantId,
-                Amount = merchant.CurrentBalance, // Default to full balance
+                Amount = merchant.CurrentBalance,
                 PaidAt = DateTime.UtcNow
             };
 
@@ -62,12 +59,10 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return View(model);
         }
 
-        // POST: Create payout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(MerchantPayouts payout)
         {
-            // Remove validation errors for navigation property
             ModelState.Remove("Merchant");
 
             var merchant = _unitOfWork.Merchant.Get(m => m.Id == payout.MerchantId, tracked: true);
@@ -92,13 +87,11 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return View(payout);
             }
 
-            // Deduct from merchant balance
             merchant.CurrentBalance -= payout.Amount;
             merchant.TotalPaidOut += payout.Amount;
 
-            // Create payout record
             payout.PaidAt = DateTime.UtcNow;
-            payout.Merchant = null; // Clear navigation property before saving
+            payout.Merchant = null; 
             _unitOfWork.MerchantPayout.Add(payout);
             _unitOfWork.Merchant.Update(merchant);
             _unitOfWork.Save();
@@ -107,7 +100,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return RedirectToAction("Details", "Merchants", new { id = payout.MerchantId });
         }
 
-        // GET: Merchant payout history
         public IActionResult MerchantHistory(int merchantId)
         {
             var merchant = _unitOfWork.Merchant.Get(m => m.Id == merchantId, includeProperties: "Payouts");

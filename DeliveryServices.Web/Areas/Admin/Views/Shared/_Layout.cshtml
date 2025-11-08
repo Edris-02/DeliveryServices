@@ -76,9 +76,9 @@
                     background-clip: padding-box;
                 }
 
-            .app-sidebar::-webkit-scrollbar-thumb:active {
-                background: rgba(255, 255, 255, 0.35);
-            }
+                .app-sidebar::-webkit-scrollbar-thumb:active {
+                    background: rgba(255, 255, 255, 0.35);
+                }
 
         /* Firefox scrollbar */
         .app-sidebar {
@@ -263,13 +263,13 @@
             flex-direction: column;
         }
 
-        .content-scroll > .container-fluid {
-            flex: 1 0 auto;
-        }
+            .content-scroll > .container-fluid {
+                flex: 1 0 auto;
+            }
 
-        .content-scroll footer {
-            flex-shrink: 0;
-        }
+            .content-scroll footer {
+                flex-shrink: 0;
+            }
 
         /* Sidebar collapse for mobile */
         @@media (max-width: 991.98px) {
@@ -316,25 +316,25 @@
         .form-control,
         .form-select,
         .input-group input,
-  .input-group-text {
+        .input-group-text {
             box-shadow: none;
-     }
-
-     .form-control:focus,
-        .form-select:focus,
-        .input-group input:focus {
-            border-color: #2563eb;
-      box-shadow: none;
-  outline: none;
         }
+
+            .form-control:focus,
+            .form-select:focus,
+            .input-group input:focus {
+                border-color: #2563eb;
+                box-shadow: none;
+                outline: none;
+            }
 
         /* Toast positioning */
         .toast-container {
- position: fixed;
+            position: fixed;
             top: 1rem;
-   right: 1rem;
-  z-index: 1090;
- }
+            right: 1rem;
+            z-index: 1090;
+        }
     </style>
     @RenderSection("Styles", required: false)
 </head>
@@ -389,20 +389,20 @@
                 <div class="nav-section-title">Analytics</div>
                 <ul class="nav flex-column">
                     <li class="nav-item">
-  <a class="nav-link @(controller == "Reports" ? "active" : "")"
-      href="@Url.Action("Index", "Reports", new { area = "Admin" })">
-        <i class="bi bi-file-earmark-bar-graph"></i>
-         <span>Reports</span>
-                  </a>
-  </li>
-            <li class="nav-item">
-    <a class="nav-link @(controller == "Analytics" ? "active" : "")"
-    href="@Url.Action("Index", "Analytics", new { area = "Admin" })">
-          <i class="bi bi-graph-up-arrow"></i>
-   <span>Analytics</span>
-           </a>
-        </li>
-           </ul>
+                        <a class="nav-link @(controller == "Reports" ? "active" : "")"
+                           href="@Url.Action("Index", "Reports", new { area = "Admin" })">
+                            <i class="bi bi-file-earmark-bar-graph"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(controller == "Analytics" ? "active" : "")"
+                           href="@Url.Action("Index", "Analytics", new { area = "Admin" })">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                </ul>
 
                 <div class="nav-section-title">System</div>
                 <ul class="nav flex-column">
@@ -426,242 +426,241 @@
             <!-- Sidebar Footer -->
             <div class="sidebar-footer">
                 <div class="dropdown dropup w-100">
-                   <a href="#" class="sidebar-user" data-bs-toggle="dropdown" aria-expanded="false">
-                      <img src="https://ui-avatars.com/api/?name=@(User.Identity?.Name?.Replace(" ", "+") ?? "User")&background=2563eb&color=fff"
-                  alt="User Avatar"
-                       class="sidebar-user-avatar" />
-                   <div class="sidebar-user-info">
-                    <p class="sidebar-user-name">@await Component.InvokeAsync("CurrentUser")</p>
-                     <p class="sidebar-user-role">Administrator</p>
-                   </div>
-                <i class="bi bi-three-dots-vertical"></i>
-                    </a>
-                     <ul class="dropdown-menu dropdown-menu-dark w-100">
-                       <li>
-                      <a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="Index">
-                   <i class="bi bi-person-circle me-2"></i>My Profile
-                      </a>
-                  </li>
-                       <li>
-                       <a class="dropdown-item" asp-area="Admin" asp-controller="Settings" asp-action="Index">
-                    <i class="bi bi-gear me-2"></i>Settings
-                         </a>
-                    </li>
-                  <li>
-                      <a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="ChangePassword">
-                  <i class="bi bi-key me-2"></i>Change Password
-                 </a>
-                 </li>
-                <li><hr class="dropdown-divider" /></li>
-                  <li>
-              <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="d-inline w-100">
-                     @Html.AntiForgeryToken()
-                       <button type="submit" class="dropdown-item text-danger">
-                    <i class="bi bi-box-arrow-right me-2"></i>Sign Out
-                    </button>
-                    </form>
-                   </li>
-                  </ul>
-                      </div>
-                   <div class="text-center mt-2">© @DateTime.UtcNow.Year Delivery Services</div>
-                       </div>
-            </aside>
-
-            <!-- Main content -->
-            <div class="app-content d-flex flex-column w-100">
-                <!-- Top bar -->
-                <nav class="navbar navbar-expand-lg bg-body border-bottom">
-                    <div class="container-fluid">
-                        <button id="sidebarToggle" class="btn btn-outline-secondary d-lg-none" type="button" aria-label="Toggle sidebar">
-                            <i class="bi bi-list"></i>
-                        </button>
-
-                        <!-- Enhanced Search Form -->
-  <form asp-area="Admin" asp-controller="Search" asp-action="Index" method="get" class="ms-2 flex-grow-1" role="search" style="max-width: 600px;">
-     <div class="input-group">
-           <span class="input-group-text bg-transparent border-end-0">
-   <i class="bi bi-search"></i>
-         </span>
-       <input class="form-control border-start-0 ps-0" 
-       type="search" 
-    name="q" 
-                   placeholder="Search orders, merchants, drivers..." 
-        aria-label="Search"
-           autocomplete="off" />
-           <button class="btn btn-outline-secondary d-none d-md-inline-flex" type="submit">
-      Search
-         </button>
-     </div>
-              </form>
-
-    <div class="ms-auto d-flex align-items-center gap-2">
-                  <button id="themeToggle" class="btn btn-outline-secondary" type="button" title="Toggle theme">
-          <i class="bi bi-moon-stars"></i>
-           </button>
- <button class="btn btn-outline-secondary position-relative" type="button" title="Notifications">
-         <i class="bi bi-bell"></i>
-        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
-  </button>
- <div class="dropdown">
-         <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
-        <img src="https://ui-avatars.com/api/?name=@(User.Identity?.Name?.Replace(" ", "+") ?? "User")&background=2563eb&color=fff"
-      alt="avatar" width="24" height="24" class="rounded-circle" />
-        @await Component.InvokeAsync("CurrentUser")
-       </button>
-     <ul class="dropdown-menu dropdown-menu-end">
-     <li><h6 class="dropdown-header">@await Component.InvokeAsync("CurrentUser")</h6></li>
-<li><hr class="dropdown-divider" /></li>
- <li><a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="Index"><i class="bi bi-person me-2"></i>Profile</a></li>
-    <li><a class="dropdown-item" asp-area="Admin" asp-controller="Settings" asp-action="Index"><i class="bi bi-gear me-2"></i>Settings</a></li>
-      <li><hr class="dropdown-divider" /></li>
-          <li>
-            <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-              @Html.AntiForgeryToken()
-       <button type="submit" class="dropdown-item text-danger">
-    <i class="bi bi-box-arrow-right me-2"></i>Sign out
-  </button>
-      </form>
-     </li>
-         </ul>
-      </div>
-     </div>
-          </div>
-                </nav>
-
-                <!-- Scrollable page content -->
-                <div class="content-scroll">
-                    <div class="container-fluid py-4">
-                        @RenderSection("PageHeader", required: false)
-                        @RenderBody()
-                    </div>
-                    <footer class="mt-auto py-3 border-top bg-body">
-                        <div class="container-fluid small text-secondary">
-                            Built with <a href="https://getbootstrap.com" class="link-secondary" target="_blank" rel="noopener">Bootstrap 5</a>
+                    <a href="#" class="sidebar-user" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="https://ui-avatars.com/api/?name=@(User.Identity?.Name?.Replace(" ", "+") ?? "User")&background=2563eb&color=fff"
+                             alt="User Avatar"
+                             class="sidebar-user-avatar" />
+                        <div class="sidebar-user-info">
+                            <p class="sidebar-user-name">@await Component.InvokeAsync("CurrentUser")</p>
+                            <p class="sidebar-user-role">Administrator</p>
                         </div>
-                    </footer>
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-dark w-100">
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="Index">
+                                <i class="bi bi-person-circle me-2"></i>My Profile
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Settings" asp-action="Index">
+                                <i class="bi bi-gear me-2"></i>Settings
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="ChangePassword">
+                                <i class="bi bi-key me-2"></i>Change Password
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li>
+                            <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="d-inline w-100">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
+                <div class="text-center mt-2">© @DateTime.UtcNow.Year Delivery Services</div>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <div class="app-content d-flex flex-column w-100">
+            <!-- Top bar -->
+            <nav class="navbar navbar-expand-lg bg-body border-bottom">
+                <div class="container-fluid">
+                    <button id="sidebarToggle" class="btn btn-outline-secondary d-lg-none" type="button" aria-label="Toggle sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+
+                    <!-- Enhanced Search Form -->
+                    <form asp-area="Admin" asp-controller="Search" asp-action="Index" method="get" class="ms-2 flex-grow-1" role="search" style="max-width: 600px;">
+                        <div class="input-group">
+                            <span class="input-group-text bg-transparent border-end-0">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input class="form-control border-start-0 ps-0"
+                                   type="search"
+                                   name="q"
+                                   placeholder="Search orders, merchants, drivers..."
+                                   aria-label="Search"
+                                   autocomplete="off" />
+                            <button class="btn btn-outline-secondary d-none d-md-inline-flex" type="submit">
+                                Search
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <button id="themeToggle" class="btn btn-outline-secondary" type="button" title="Toggle theme">
+                            <i class="bi bi-moon-stars"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary position-relative" type="button" title="Notifications">
+                            <i class="bi bi-bell"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
+                        </button>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">
+                                <img src="https://ui-avatars.com/api/?name=@(User.Identity?.Name?.Replace(" ", "+") ?? "User")&background=2563eb&color=fff"
+                                     alt="avatar" width="24" height="24" class="rounded-circle" />
+                                @await Component.InvokeAsync("CurrentUser")
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><h6 class="dropdown-header">@await Component.InvokeAsync("CurrentUser")</h6></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Profile" asp-action="Index"><i class="bi bi-person me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" asp-area="Admin" asp-controller="Settings" asp-action="Index"><i class="bi bi-gear me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li>
+                                    <form asp-area="Identity" asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i>Sign out
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Scrollable page content -->
+            <div class="content-scroll">
+                <div class="container-fluid py-4">
+                    @RenderSection("PageHeader", required: false)
+                    @RenderBody()
+                </div>
+                <footer class="mt-auto py-3 border-top bg-body">
+                    <div class="container-fluid small text-secondary">
+                        Built with <a href="https://getbootstrap.com" class="link-secondary" target="_blank" rel="noopener">Bootstrap 5</a>
+                    </div>
+                </footer>
             </div>
         </div>
+    </div>
 
-        <div id="sidebarBackdrop" class="offcanvas-backdrop-custom"></div>
+    <div id="sidebarBackdrop" class="offcanvas-backdrop-custom"></div>
 
-        <!-- Toasts -->
-        @if (TempData["success"] != null || TempData["error"] != null || TempData["info"] != null)
-        {
-            <div class="toast-container">
-                @if (TempData["success"] != null)
-                {
-                    <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
-                        <div class="d-flex">
-                            <div class="toast-body"><i class="bi bi-check-circle"></i> @TempData["success"]</div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
+    <!-- Toasts -->
+    @if (TempData["success"] != null || TempData["error"] != null || TempData["info"] != null)
+    {
+        <div class="toast-container">
+            @if (TempData["success"] != null)
+            {
+                <div class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+                    <div class="d-flex">
+                        <div class="toast-body"><i class="bi bi-check-circle"></i> @TempData["success"]</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
-                }
-                @if (TempData["error"] != null)
-                {
-                    <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4500">
-                        <div class="d-flex">
-                            <div class="toast-body"><i class="bi bi-exclamation-triangle"></i> @TempData["error"]</div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                    </div>
-                }
-                @if (TempData["info"] != null)
-                {
-                    <div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
-                        <div class="d-flex">
-                            <div class="toast-body"><i class="bi bi-info-circle"></i> @TempData["info"]</div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script>
-// Sidebar show/hide on mobile
-    (function () {
-    const sidebar = document.getElementById('sidebar');
-    const backdrop = document.getElementById('sidebarBackdrop');
-      const toggle = document.getElementById('sidebarToggle');
-       const mql = window.matchMedia('(max-width: 991.98px)');
-
-       function closeSidebar() {
-     sidebar.classList.remove('show');
-  backdrop.classList.remove('show');
-               document.body.classList.remove('sidebar-open');
+                </div>
             }
-     function openSidebar() {
-            sidebar.classList.add('show');
-      backdrop.classList.add('show');
-  document.body.classList.add('sidebar-open');
-               }
-    function resetForDesktop(e) {
-        if (!e.matches) { // desktop
-      sidebar.classList.remove('show');
-     backdrop.classList.remove('show');
-  document.body.classList.remove('sidebar-open');
-         }
-     }
-          if (toggle) toggle.addEventListener('click', openSidebar);
-     if (backdrop) backdrop.addEventListener('click', closeSidebar);
-       mql.addEventListener('change', resetForDesktop);
- })();
+            @if (TempData["error"] != null)
+            {
+                <div class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="4500">
+                    <div class="d-flex">
+                        <div class="toast-body"><i class="bi bi-exclamation-triangle"></i> @TempData["error"]</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+            @if (TempData["info"] != null)
+            {
+                <div class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3500">
+                    <div class="d-flex">
+                        <div class="toast-body"><i class="bi bi-info-circle"></i> @TempData["info"]</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 
-      // Theme toggle with persistence
-              (function () {
-        const key = 'preferred-theme';
-              const root = document.documentElement;
-          const btn = document.getElementById('themeToggle');
-  const stored = localStorage.getItem(key);
-if (stored === 'dark' || stored === 'light') {
-              root.setAttribute('data-bs-theme', stored);
-      }
-           function toggle() {
-            const current = root.getAttribute('data-bs-theme') || 'light';
-           const next = current === 'dark' ? 'light' : 'dark';
-            root.setAttribute('data-bs-theme', next);
-   localStorage.setItem(key, next);
-      }
-           if (btn) btn.addEventListener('click', toggle);
-   })();
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+            (function () {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+              const toggle = document.getElementById('sidebarToggle');
+               const mql = window.matchMedia('(max-width: 991.98px)');
+
+               function closeSidebar() {
+             sidebar.classList.remove('show');
+          backdrop.classList.remove('show');
+                       document.body.classList.remove('sidebar-open');
+                    }
+             function openSidebar() {
+                    sidebar.classList.add('show');
+              backdrop.classList.add('show');
+          document.body.classList.add('sidebar-open');
+                       }
+            function resetForDesktop(e) {
+                if (!e.matches) { // desktop
+              sidebar.classList.remove('show');
+             backdrop.classList.remove('show');
+          document.body.classList.remove('sidebar-open');
+                 }
+             }
+                  if (toggle) toggle.addEventListener('click', openSidebar);
+             if (backdrop) backdrop.addEventListener('click', closeSidebar);
+               mql.addEventListener('change', resetForDesktop);
+         })();
+
+              // Theme toggle with persistence
+                      (function () {
+                const key = 'preferred-theme';
+                      const root = document.documentElement;
+                  const btn = document.getElementById('themeToggle');
+          const stored = localStorage.getItem(key);
+        if (stored === 'dark' || stored === 'light') {
+                      root.setAttribute('data-bs-theme', stored);
+              }
+                   function toggle() {
+                    const current = root.getAttribute('data-bs-theme') || 'light';
+                   const next = current === 'dark' ? 'light' : 'dark';
+                    root.setAttribute('data-bs-theme', next);
+           localStorage.setItem(key, next);
+              }
+                   if (btn) btn.addEventListener('click', toggle);
+           })();
 
 
-// Toast notifications
-    (function () {
-      const container = document.querySelector('.toast-container');
-       if (!container) return;
-     const nodes = container.querySelectorAll('.toast');
- nodes.forEach(node => new bootstrap.Toast(node).show());
-            })();
+        // Toast notifications
+            (function () {
+              const container = document.querySelector('.toast-container');
+               if (!container) return;
+             const nodes = container.querySelectorAll('.toast');
+         nodes.forEach(node => new bootstrap.Toast(node).show());
+                    })();
 
-        // Search keyboard shortcut (Ctrl+K or Cmd+K)
-     (function () {
-    const searchInput = document.querySelector('input[name="q"]');
-      if (!searchInput) return;
+                // Search keyboard shortcut (Ctrl+K or Cmd+K)
+             (function () {
+            const searchInput = document.querySelector('input[name="q"]');
+              if (!searchInput) return;
 
-          document.addEventListener('keydown', function(e) {
-    // Check for Ctrl+K or Cmd+K
-        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-          e.preventDefault();
-   searchInput.focus();
-       searchInput.select();
-          }
-                // ESC to clear search
-         if (e.key === 'Escape' && document.activeElement === searchInput) {
-    searchInput.value = '';
-         searchInput.blur();
-     }
-    });
+                  document.addEventListener('keydown', function(e) {
+            // Check for Ctrl+K or Cmd+K
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                  e.preventDefault();
+           searchInput.focus();
+               searchInput.select();
+                  }
+                        // ESC to clear search
+                 if (e.key === 'Escape' && document.activeElement === searchInput) {
+            searchInput.value = '';
+                 searchInput.blur();
+             }
+            });
 
-            // Add keyboard shortcut hint
-       searchInput.setAttribute('placeholder', 'Search... (Ctrl+K)');
-   })();
+                    // Add keyboard shortcut hint
+               searchInput.setAttribute('placeholder', 'Search... (Ctrl+K)');
+           })();
     </script>
 
-        @await RenderSectionAsync("Scripts", required: false)
-    </body>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
 </html>

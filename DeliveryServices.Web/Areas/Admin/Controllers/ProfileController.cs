@@ -11,113 +11,108 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-  public ProfileController(UserManager<ApplicationUser> userManager)
+        public ProfileController(UserManager<ApplicationUser> userManager)
         {
-    _userManager = userManager;
+            _userManager = userManager;
         }
 
-        // GET: Profile
-  public async Task<IActionResult> Index()
-     {
-   var user = await _userManager.GetUserAsync(User);
-     if (user == null)
-   {
-     return NotFound();
-          }
-
-     var roles = await _userManager.GetRolesAsync(user);
-    ViewBag.Roles = string.Join(", ", roles);
-
-   return View(user);
-  }
-
-        // GET: Edit Profile
-     public async Task<IActionResult> Edit()
-      {
-      var user = await _userManager.GetUserAsync(User);
-   if (user == null)
-  {
-          return NotFound();
+        public async Task<IActionResult> Index()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
             }
 
-   return View(user);
+            var roles = await _userManager.GetRolesAsync(user);
+            ViewBag.Roles = string.Join(", ", roles);
+
+            return View(user);
         }
 
-        // POST: Edit Profile
- [HttpPost]
-        [ValidateAntiForgeryToken]
-   public async Task<IActionResult> Edit(string fullName, string phoneNumber)
+        public async Task<IActionResult> Edit()
         {
-       var user = await _userManager.GetUserAsync(User);
-   if (user == null)
-    {
-       return NotFound();
-     }
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-          if (string.IsNullOrWhiteSpace(fullName))
-     {
-    ModelState.AddModelError("", "Full name is required");
-        return View(user);
-   }
+            return View(user);
+        }
 
-    user.FullName = fullName.Trim();
-   user.PhoneNumber = phoneNumber?.Trim();
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string fullName, string phoneNumber)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-   var result = await _userManager.UpdateAsync(user);
-   if (result.Succeeded)
-       {
-     TempData["success"] = "Profile updated successfully";
-     return RedirectToAction(nameof(Index));
-   }
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                ModelState.AddModelError("", "Full name is required");
+                return View(user);
+            }
+
+            user.FullName = fullName.Trim();
+            user.PhoneNumber = phoneNumber?.Trim();
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                TempData["success"] = "Profile updated successfully";
+                return RedirectToAction(nameof(Index));
+            }
 
             foreach (var error in result.Errors)
-       {
-      ModelState.AddModelError("", error.Description);
+            {
+                ModelState.AddModelError("", error.Description);
             }
 
-       return View(user);
-    }
+            return View(user);
+        }
 
-        // GET: Change Password
-     public IActionResult ChangePassword()
-   {
-   return View();
-   }
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
 
-  // POST: Change Password
         [HttpPost]
- [ValidateAntiForgeryToken]
-     public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
-      {
-  if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword))
-         {
-           ModelState.AddModelError("", "All fields are required");
-    return View();
- }
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(string currentPassword, string newPassword, string confirmPassword)
+        {
+            if (string.IsNullOrWhiteSpace(currentPassword) || string.IsNullOrWhiteSpace(newPassword))
+            {
+                ModelState.AddModelError("", "All fields are required");
+                return View();
+            }
 
-   if (newPassword != confirmPassword)
-     {
-           ModelState.AddModelError("", "New password and confirmation do not match");
-    return View();
-    }
+            if (newPassword != confirmPassword)
+            {
+                ModelState.AddModelError("", "New password and confirmation do not match");
+                return View();
+            }
 
-     var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
-  {
-    return NotFound();
-    }
+            {
+                return NotFound();
+            }
 
-   var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-     if (result.Succeeded)
-     {
-    TempData["success"] = "Password changed successfully";
-   return RedirectToAction(nameof(Index));
-    }
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+            if (result.Succeeded)
+            {
+                TempData["success"] = "Password changed successfully";
+                return RedirectToAction(nameof(Index));
+            }
 
-   foreach (var error in result.Errors)
-  {
-   ModelState.AddModelError("", error.Description);
-  }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
 
             return View();
         }

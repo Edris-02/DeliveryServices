@@ -8,7 +8,7 @@ namespace DeliveryServices.DataAccess.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
-            
+
         }
 
         public DbSet<Merchants> Merchants { get; set; }
@@ -22,21 +22,18 @@ namespace DeliveryServices.DataAccess.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure Merchant-User relationship
             modelBuilder.Entity<Merchants>()
                 .HasOne(m => m.User)
                 .WithOne(u => u.Merchant)
                 .HasForeignKey<Merchants>(m => m.UserId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Configure Driver-User relationship
             modelBuilder.Entity<Driver>()
                 .HasOne(d => d.User)
                 .WithOne(u => u.Driver)
                 .HasForeignKey<Driver>(d => d.UserId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Configure Order-Driver relationship
             modelBuilder.Entity<Orders>()
                 .HasOne(o => o.Driver)
                 .WithMany(d => d.Orders)

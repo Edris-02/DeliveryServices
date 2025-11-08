@@ -19,14 +19,12 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             _userManager = userManager;
         }
 
-        // GET: Drivers
         public IActionResult Index()
         {
             var drivers = _unitOfWork.Driver.GetAll(includeProperties: "Orders,SalaryPayments").ToList();
             return View(drivers);
         }
 
-        // GET: Drivers/Details/5
         public IActionResult Details(int id)
         {
             var driver = _unitOfWork.Driver.Get(
@@ -42,13 +40,11 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return View(driver);
         }
 
-        // GET: Drivers/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Drivers/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Models.Driver driver)
@@ -64,7 +60,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
             try
             {
-                // Check if email already exists
                 var existingUser = await _userManager.FindByEmailAsync(driver.Email);
                 if (existingUser != null)
                 {
@@ -72,7 +67,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     return View(driver);
                 }
 
-                // Create ApplicationUser for the driver
                 var user = new ApplicationUser
                 {
                     UserName = driver.Email,
@@ -82,7 +76,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     EmailConfirmed = true
                 };
 
-                // Generate default password: FirstName@123
                 var defaultPassword = $"{driver.FullName.Split(' ')[0]}@123";
                 var result = await _userManager.CreateAsync(user, defaultPassword);
 
@@ -93,18 +86,14 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     return View(driver);
                 }
 
-                // Assign Driver role
                 await _userManager.AddToRoleAsync(user, UserRoles.Driver);
 
-                // Link driver to user
                 driver.UserId = user.Id;
                 driver.JoinedDate = DateTime.UtcNow;
 
-                // Save driver
                 _unitOfWork.Driver.Add(driver);
                 _unitOfWork.Save();
 
-                // Update user with DriverId
                 user.DriverId = driver.Id;
                 await _userManager.UpdateAsync(user);
 
@@ -118,7 +107,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             }
         }
 
-        // GET: Drivers/Edit/5
         public IActionResult Edit(int id)
         {
             var driver = _unitOfWork.Driver.Get(d => d.Id == id);
@@ -131,7 +119,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return View(driver);
         }
 
-        // POST: Drivers/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Models.Driver driver)
@@ -152,7 +139,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Details), new { id = driver.Id });
         }
 
-        // POST: Drivers/ToggleStatus/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ToggleStatus(int id)
@@ -171,7 +157,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return RedirectToAction(nameof(Details), new { id = driver.Id });
         }
 
-        // GET: Drivers/PaySalary/5
         public IActionResult PaySalary(int id)
         {
             var driver = _unitOfWork.Driver.Get(
@@ -209,7 +194,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             return View(payment);
         }
 
-        // POST: Drivers/PaySalary
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult PaySalary(DriverSalaryPayment payment)
@@ -239,8 +223,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 return View(payment);
             }
 
-            // Create a new payment object to avoid identity insert issues
-            // Model binding sets Id = 0, which EF interprets as an explicit identity value
             var newPayment = new DriverSalaryPayment
             {
                 DriverId = payment.DriverId,
@@ -259,10 +241,9 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
             _unitOfWork.DriverSalaryPayment.Add(newPayment);
 
-            // Update driver balance
             driver.CurrentBalance -= payment.Amount;
             driver.TotalEarnings += payment.Amount;
-            driver.CurrentMonthDeliveries = 0; // Reset monthly counter
+            driver.CurrentMonthDeliveries = 0;
 
             _unitOfWork.Save();
 

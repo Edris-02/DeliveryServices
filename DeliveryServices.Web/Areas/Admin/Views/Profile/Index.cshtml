@@ -6,132 +6,132 @@
 
 @section PageHeader {
     <div class="d-flex justify-content-between align-items-center mb-4">
- <div>
+        <div>
             <h1 class="h3 mb-0">My Profile</h1>
-   <p class="text-muted mb-0">Manage your personal information</p>
- </div>
-    <a asp-action="Edit" class="btn btn-primary">
-  <i class="bi bi-pencil"></i> Edit Profile
-  </a>
+            <p class="text-muted mb-0">Manage your personal information</p>
+        </div>
+        <a asp-action="Edit" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Edit Profile
+        </a>
     </div>
 }
 
 <div class="row g-4">
     <!-- Profile Information Card -->
     <div class="col-lg-4">
- <div class="card">
-     <div class="card-body text-center">
-    <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=2563eb&color=fff&size=128"
-      alt="@Model.FullName"
-         class="rounded-circle mb-3"
-        width="128"
-     height="128" />
- <h4 class="mb-1">@Model.FullName</h4>
-       <p class="text-muted mb-3">@roles</p>
-  <hr />
-    <div class="text-start">
-      <div class="mb-3">
-      <label class="text-muted small">Email</label>
-    <div class="fw-semibold">@Model.Email</div>
-   </div>
-     @if (!string.IsNullOrEmpty(Model.PhoneNumber))
-    {
-      <div class="mb-3">
-           <label class="text-muted small">Phone</label>
- <div class="fw-semibold">@Model.PhoneNumber</div>
-  </div>
-   }
-   <div class="mb-3">
-   <label class="text-muted small">Email Confirmed</label>
-   <div>
-       @if (Model.EmailConfirmed)
-     {
-<span class="badge bg-success">Confirmed</span>
-    }
-       else
-    {
-         <span class="badge bg-warning">Not Confirmed</span>
-  }
+        <div class="card">
+            <div class="card-body text-center">
+                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=2563eb&color=fff&size=128"
+                     alt="@Model.FullName"
+                     class="rounded-circle mb-3"
+                     width="128"
+                     height="128" />
+                <h4 class="mb-1">@Model.FullName</h4>
+                <p class="text-muted mb-3">@roles</p>
+                <hr />
+                <div class="text-start">
+                    <div class="mb-3">
+                        <label class="text-muted small">Email</label>
+                        <div class="fw-semibold">@Model.Email</div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <div class="mb-3">
+                            <label class="text-muted small">Phone</label>
+                            <div class="fw-semibold">@Model.PhoneNumber</div>
+                        </div>
+                    }
+                    <div class="mb-3">
+                        <label class="text-muted small">Email Confirmed</label>
+                        <div>
+                            @if (Model.EmailConfirmed)
+                            {
+                                <span class="badge bg-success">Confirmed</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-warning">Not Confirmed</span>
+                            }
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-muted small">Two-Factor Authentication</label>
+                        <div>
+                            @if (Model.TwoFactorEnabled)
+                            {
+                                <span class="badge bg-success">Enabled</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Disabled</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-      <div>
-     <label class="text-muted small">Two-Factor Authentication</label>
-    <div>
-      @if (Model.TwoFactorEnabled)
-      {
-       <span class="badge bg-success">Enabled</span>
-  }
-     else
-     {
-  <span class="badge bg-secondary">Disabled</span>
- }
-      </div>
-   </div>
-    </div>
-     </div>
- </div>
     </div>
 
     <!-- Account Actions Card -->
     <div class="col-lg-8">
         <div class="card mb-4">
-     <div class="card-header bg-white">
-    <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Security</h5>
- </div>
-   <div class="card-body">
- <div class="d-flex align-items-center justify-content-between mb-3">
-      <div>
-      <h6 class="mb-1">Password</h6>
-   <p class="text-muted small mb-0">Change your account password</p>
-   </div>
-     <a asp-action="ChangePassword" class="btn btn-outline-primary">
-       <i class="bi bi-key"></i> Change Password
- </a>
-  </div>
-    <hr />
-     <div class="d-flex align-items-center justify-content-between">
-     <div>
-      <h6 class="mb-1">Two-Factor Authentication</h6>
-    <p class="text-muted small mb-0">Add an extra layer of security to your account</p>
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-shield-lock"></i> Security</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div>
+                        <h6 class="mb-1">Password</h6>
+                        <p class="text-muted small mb-0">Change your account password</p>
+                    </div>
+                    <a asp-action="ChangePassword" class="btn btn-outline-primary">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
+                </div>
+                <hr />
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h6 class="mb-1">Two-Factor Authentication</h6>
+                        <p class="text-muted small mb-0">Add an extra layer of security to your account</p>
+                    </div>
+                    <a asp-area="Admin" asp-controller="Settings" asp-action="Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-gear"></i> Configure
+                    </a>
+                </div>
+            </div>
         </div>
-   <a asp-area="Admin" asp-controller="Settings" asp-action="Index" class="btn btn-outline-secondary">
-       <i class="bi bi-gear"></i> Configure
-  </a>
-  </div>
-   </div>
- </div>
 
         <!-- Account Information -->
         <div class="card">
-   <div class="card-header bg-white">
-    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Account Information</h5>
-     </div>
-   <div class="card-body">
-  <div class="row g-3">
-<div class="col-md-6">
-     <label class="text-muted small">User ID</label>
-     <div class="font-monospace small">@Model.Id</div>
-     </div>
-       <div class="col-md-6">
-    <label class="text-muted small">Username</label>
-       <div class="fw-semibold">@Model.UserName</div>
-  </div>
-       <div class="col-md-6">
-        <label class="text-muted small">Lockout Status</label>
-      <div>
-    @if (Model.LockoutEnd.HasValue && Model.LockoutEnd.Value > DateTimeOffset.UtcNow)
-      {
-     <span class="badge bg-danger">Locked</span>
-    <small class="text-muted">Until @Model.LockoutEnd.Value.ToString("g")</small>
- }
-     else
-          {
-     <span class="badge bg-success">Active</span>
-       }
-    </div>
-     </div>
-   </div>
-  </div>
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="text-muted small">User ID</label>
+                        <div class="font-monospace small">@Model.Id</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Username</label>
+                        <div class="fw-semibold">@Model.UserName</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="text-muted small">Lockout Status</label>
+                        <div>
+                            @if (Model.LockoutEnd.HasValue && Model.LockoutEnd.Value > DateTimeOffset.UtcNow)
+                            {
+                                <span class="badge bg-danger">Locked</span>
+                                <small class="text-muted">Until @Model.LockoutEnd.Value.ToString("g")</small>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

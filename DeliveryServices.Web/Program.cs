@@ -13,29 +13,24 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DeliveryService")));
 
-// Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
-    // Password settings
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = true;
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 6;
 
-    // Lockout settings
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
     options.Lockout.AllowedForNewUsers = true;
 
-    // User settings
     options.User.RequireUniqueEmail = true;
     options.SignIn.RequireConfirmedEmail = false;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Configure application cookie
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Identity/Account/Login";
@@ -45,17 +40,13 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
-// Register UnitOfWork for dependency injection
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-// Configure culture for no currency symbol and yyyy/MM/dd date format
 var cultureInfo = new CultureInfo("en-US");
 
-// Remove currency symbol - just show numbers
 cultureInfo.NumberFormat.CurrencySymbol = "";
 cultureInfo.NumberFormat.CurrencyDecimalDigits = 2;
 
-// Set date format to yyyy/MM/dd
 cultureInfo.DateTimeFormat.ShortDatePattern = "yyyy/MM/dd";
 cultureInfo.DateTimeFormat.LongDatePattern = "yyyy/MM/dd";
 
@@ -70,10 +61,8 @@ builder.Services.Configure<RequestLocalizationOptions>(options =>
 
 var app = builder.Build();
 
-// Seed default admin user on first run
 await SeedDefaultAdminUser(app);
 
-// Use request localization
 app.UseRequestLocalization();
 
 if (!app.Environment.IsDevelopment())
@@ -109,7 +98,6 @@ app.MapControllerRoute(
 
 app.Run();
 
-// Method to seed default admin user
 async Task SeedDefaultAdminUser(WebApplication app)
 {
     using (var scope = app.Services.CreateScope())
@@ -122,7 +110,6 @@ async Task SeedDefaultAdminUser(WebApplication app)
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
             var logger = services.GetRequiredService<ILogger<Program>>();
 
-            // Ensure all roles exist
             string[] roles = { UserRoles.Admin, UserRoles.Merchant, UserRoles.Driver };
 
             foreach (var role in roles)
@@ -134,7 +121,6 @@ async Task SeedDefaultAdminUser(WebApplication app)
                 }
             }
 
-            // Create default admin user
             const string adminUsername = "admin@deliveryservices.com";
             const string adminPassword = "Admin123!@#";
 

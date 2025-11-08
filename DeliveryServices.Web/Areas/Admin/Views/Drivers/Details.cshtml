@@ -6,32 +6,32 @@
 @section PageHeader {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-        <nav aria-label="breadcrumb">
-      <ol class="breadcrumb mb-2">
-            <li class="breadcrumb-item"><a asp-action="Index">Drivers</a></li>
-       <li class="breadcrumb-item active">@Model.FullName</li>
-   </ol>
-   </nav>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-2">
+                    <li class="breadcrumb-item"><a asp-action="Index">Drivers</a></li>
+                    <li class="breadcrumb-item active">@Model.FullName</li>
+                </ol>
+            </nav>
             <h1 class="h3 mb-0">@Model.FullName</h1>
         </div>
         <div class="btn-group">
             <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">
                 <i class="bi bi-pencil"></i> Edit
             </a>
- @if (Model.CurrentBalance > 0)
-      {
-   <a asp-action="PaySalary" asp-route-id="@Model.Id" class="btn btn-success">
-             <i class="bi bi-cash"></i> Pay Salary (@Model.CurrentBalance.ToString("N2"))
-      </a>
-     }
-     <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post" class="d-inline">
+            @if (Model.CurrentBalance > 0)
+            {
+                <a asp-action="PaySalary" asp-route-id="@Model.Id" class="btn btn-success">
+                    <i class="bi bi-cash"></i> Pay Salary (@Model.CurrentBalance.ToString("N2"))
+                </a>
+            }
+            <form asp-action="ToggleStatus" asp-route-id="@Model.Id" method="post" class="d-inline">
                 @Html.AntiForgeryToken()
-             <button type="submit" class="btn btn-outline-@(Model.IsActive ? "warning" : "success")">
-           <i class="bi bi-@(Model.IsActive ? "pause" : "play")-circle"></i>
-    @(Model.IsActive ? "Deactivate" : "Activate")
-     </button>
-    </form>
-   </div>
+                <button type="submit" class="btn btn-outline-@(Model.IsActive ? "warning" : "success")">
+                    <i class="bi bi-@(Model.IsActive ? "pause" : "play")-circle"></i>
+                    @(Model.IsActive ? "Deactivate" : "Activate")
+                </button>
+            </form>
+        </div>
     </div>
 }
 
@@ -40,281 +40,278 @@
     <div class="col-lg-4">
         <!-- Driver Profile Card -->
         <div class="card mb-4">
-       <div class="card-body text-center">
-      <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=2563eb&color=fff&size=128"
-           alt="@Model.FullName"
-     class="rounded-circle mb-3"
-   width="128"
-               height="128" />
-  <h4 class="mb-1">@Model.FullName</h4>
-      <p class="text-muted mb-3">Delivery Driver</p>
-    @if (Model.IsActive)
-      {
-     <span class="badge bg-success mb-3">Active</span>
-      }
-     else
-   {
-           <span class="badge bg-secondary mb-3">Inactive</span>
-    }
-       <hr />
-        <div class="text-start">
-          <div class="mb-2">
-         <i class="bi bi-envelope text-muted me-2"></i>
-          <small>@Model.Email</small>
-    </div>
-               <div class="mb-2">
-        <i class="bi bi-telephone text-muted me-2"></i>
-     <small>@Model.PhoneNumber</small>
-         </div>
-          @if (!string.IsNullOrEmpty(Model.Address))
-         {
-         <div class="mb-2">
-       <i class="bi bi-geo-alt text-muted me-2"></i>
-       <small>@Model.Address</small>
-           </div>
-          }
-     <div class="mb-2">
-   <i class="bi bi-calendar text-muted me-2"></i>
-         <small>Joined @Model.JoinedDate.ToString("MMM dd, yyyy")</small>
-        </div>
+            <div class="card-body text-center">
+                <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName)&background=2563eb&color=fff&size=128"
+                     alt="@Model.FullName"
+                     class="rounded-circle mb-3"
+                     width="128"
+                     height="128" />
+                <h4 class="mb-1">@Model.FullName</h4>
+                <p class="text-muted mb-3">Delivery Driver</p>
+                @if (Model.IsActive)
+                {
+                    <span class="badge bg-success mb-3">Active</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary mb-3">Inactive</span>
+                }
+                <hr />
+                <div class="text-start">
+                    <div class="mb-2">
+                        <i class="bi bi-envelope text-muted me-2"></i>
+                        <small>@Model.Email</small>
+                    </div>
+                    <div class="mb-2">
+                        <i class="bi bi-telephone text-muted me-2"></i>
+                        <small>@Model.PhoneNumber</small>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <div class="mb-2">
+                            <i class="bi bi-geo-alt text-muted me-2"></i>
+                            <small>@Model.Address</small>
+                        </div>
+                    }
+                    <div class="mb-2">
+                        <i class="bi bi-calendar text-muted me-2"></i>
+                        <small>Joined @Model.JoinedDate.ToString("MMM dd, yyyy")</small>
+                    </div>
                 </div>
             </div>
-  </div>
+        </div>
 
         <!-- Vehicle Information -->
         <div class="card mb-4">
-     <div class="card-header bg-white">
+            <div class="card-header bg-white">
                 <h6 class="mb-0"><i class="bi bi-car-front"></i> Vehicle Information</h6>
             </div>
-  <div class="card-body">
-           <div class="mb-3">
-                <label class="text-muted small">License Number</label>
-<div>@(Model.LicenseNumber ?? "Not specified")</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">License Number</label>
+                    <div>@(Model.LicenseNumber ?? "Not specified")</div>
                 </div>
- <div class="mb-3">
-  <label class="text-muted small">Vehicle Type</label>
-              <div>@(Model.VehicleType ?? "Not specified")</div>
-       </div>
+                <div class="mb-3">
+                    <label class="text-muted small">Vehicle Type</label>
+                    <div>@(Model.VehicleType ?? "Not specified")</div>
+                </div>
                 <div>
-        <label class="text-muted small">Plate Number</label>
-         <div>@(Model.VehiclePlateNumber ?? "Not specified")</div>
-     </div>
-     </div>
+                    <label class="text-muted small">Plate Number</label>
+                    <div>@(Model.VehiclePlateNumber ?? "Not specified")</div>
+                </div>
+            </div>
         </div>
 
         <!-- Salary Configuration -->
-   <div class="card">
-          <div class="card-header bg-white">
-       <h6 class="mb-0"><i class="bi bi-cash-coin"></i> Salary Configuration</h6>
-        </div>
-      <div class="card-body">
-      <div class="mb-3">
-                <label class="text-muted small">Base Salary (Annual)</label>
-         <h5 class="mb-0">@Model.BaseSalary.ToString("N2")</h5>
-        <small class="text-muted">~@((Model.BaseSalary / 12).ToString("N2"))/month</small>
-     </div>
-       <div>
-                  <label class="text-muted small">Commission Per Delivery</label>
-     <h5 class="mb-0 text-success">@Model.CommissionPerDelivery.ToString("N2")</h5>
-        </div>
+        <div class="card">
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-cash-coin"></i> Salary Configuration</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="text-muted small">Base Salary (Annual)</label>
+                    <h5 class="mb-0">@Model.BaseSalary.ToString("N2")</h5>
+                    <small class="text-muted">~@((Model.BaseSalary / 12).ToString("N2"))/month</small>
+                </div>
+                <div>
+                    <label class="text-muted small">Commission Per Delivery</label>
+                    <h5 class="mb-0 text-success">@Model.CommissionPerDelivery.ToString("N2")</h5>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Right Column -->
     <div class="col-lg-8">
-      <!-- Statistics Cards -->
+        <!-- Statistics Cards -->
         <div class="row g-3 mb-4">
-        <div class="col-md-3">
-        <div class="card">
-      <div class="card-body">
-       <h6 class="text-muted small mb-2">Total Deliveries</h6>
-   <h3 class="mb-0">@Model.TotalDeliveries</h3>
-    </div>
-         </div>
-     </div>
- <div class="col-md-3">
-         <div class="card">
-            <div class="card-body">
-   <h6 class="text-muted small mb-2">This Month</h6>
-            <h3 class="mb-0 text-primary">@Model.CurrentMonthDeliveries</h3>
-  </div>
-        </div>
-   </div>
-  <div class="col-md-3">
-       <div class="card border-warning">
-          <div class="card-body">
-          <h6 class="text-muted small mb-2">Current Balance</h6>
-       <h3 class="mb-0 text-warning">@Model.CurrentBalance.ToString("N2")</h3>
-         </div>
-       </div>
-        </div>
-<div class="col-md-3">
-     <div class="card border-success">
-         <div class="card-body">
-          <h6 class="text-muted small mb-2">Total Earnings</h6>
-        <h3 class="mb-0 text-success">@Model.TotalEarnings.ToString("N2")</h3>
-               </div>
-  </div>
-    </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="text-muted small mb-2">Total Deliveries</h6>
+                        <h3 class="mb-0">@Model.TotalDeliveries</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="text-muted small mb-2">This Month</h6>
+                        <h3 class="mb-0 text-primary">@Model.CurrentMonthDeliveries</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-warning">
+                    <div class="card-body">
+                        <h6 class="text-muted small mb-2">Current Balance</h6>
+                        <h3 class="mb-0 text-warning">@Model.CurrentBalance.ToString("N2")</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-success">
+                    <div class="card-body">
+                        <h6 class="text-muted small mb-2">Total Earnings</h6>
+                        <h3 class="mb-0 text-success">@Model.TotalEarnings.ToString("N2")</h3>
+                    </div>
+                </div>
+            </div>
         </div>
 
-      <!-- Earnings Overview -->
+        <!-- Earnings Overview -->
         <div class="card mb-4">
-      <div class="card-header bg-white">
-      <h6 class="mb-0"><i class="bi bi-graph-up"></i> Earnings Overview</h6>
-</div>
+            <div class="card-header bg-white">
+                <h6 class="mb-0"><i class="bi bi-graph-up"></i> Earnings Overview</h6>
+            </div>
             <div class="card-body">
-              <div class="row">
+                <div class="row">
                     <div class="col-md-6">
-  <div class="mb-3">
-             <label class="text-muted small">This Month Earnings</label>
-  <h4 class="mb-0 text-success">@Model.CurrentMonthEarnings.ToString("N2")</h4>
- <small class="text-muted">
-          Base: @((Model.BaseSalary / 12).ToString("N2")) + 
-        Commission: @((Model.CurrentMonthDeliveries * Model.CommissionPerDelivery).ToString("N2"))
-           </small>
-           </div>
-</div>
-          <div class="col-md-6">
-       <div class="mb-3">
-          <label class="text-muted small">Average Per Delivery</label>
-     <h4 class="mb-0 text-info">@Model.AverageEarningsPerDelivery.ToString("N2")</h4>
-      <small class="text-muted">Based on total earnings</small>
-   </div>
- </div>
-           </div>
-        </div>
+                        <div class="mb-3">
+                            <label class="text-muted small">This Month Earnings</label>
+                            <h4 class="mb-0 text-success">@Model.CurrentMonthEarnings.ToString("N2")</h4>
+                            <small class="text-muted">
+                                Base: @((Model.BaseSalary / 12).ToString("N2")) +
+                                Commission: @((Model.CurrentMonthDeliveries * Model.CommissionPerDelivery).ToString("N2"))
+                            </small>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="text-muted small">Average Per Delivery</label>
+                            <h4 class="mb-0 text-info">@Model.AverageEarningsPerDelivery.ToString("N2")</h4>
+                            <small class="text-muted">Based on total earnings</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Recent Orders -->
-  <div class="card mb-4">
+        <div class="card mb-4">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
-       <h6 class="mb-0"><i class="bi bi-box-seam"></i> Recent Deliveries</h6>
+                <h6 class="mb-0"><i class="bi bi-box-seam"></i> Recent Deliveries</h6>
                 <span class="badge bg-primary">@Model.Orders.Count() Total</span>
             </div>
-   <div class="card-body p-0">
-       @if (Model.Orders.Any())
- {
-          <div class="table-responsive">
-        <table class="table table-hover mb-0">
-              <thead class="table-light">
-            <tr>
-       <th>Order #</th>
-               <th>Customer</th>
- <th>Status</th>
-   <th>Date</th>
- <th class="text-end">Total</th>
-   </tr>
-          </thead>
-         <tbody>
-       @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt).Take(10))
-     {
-       <tr>
-   <td><strong>#@order.Id</strong></td>
-          <td>
-         <div>@order.CustomerName</div>
-       <small class="text-muted">@order.CustomerPhone</small>
-   </td>
-  <td>
-   @switch (order.Status)
-{
-    case DeliveryServices.Models.OrderStatus.Pending:
-            <span class="badge bg-warning">Pending</span>
-         break;
-              case DeliveryServices.Models.OrderStatus.PickedUp:
-           <span class="badge bg-info">Picked Up</span>
-     break;
-  case DeliveryServices.Models.OrderStatus.InTransit:
-        <span class="badge bg-primary">In Transit</span>
-    break;
-        case DeliveryServices.Models.OrderStatus.Delivered:
-    <span class="badge bg-success">Delivered</span>
-            break;
-      case DeliveryServices.Models.OrderStatus.Cancelled:
-            <span class="badge bg-danger">Cancelled</span>
-          break;
-       }
-     </td>
-        <td>@order.CreatedAt.ToString("MMM dd, yyyy")</td>
-             <td class="text-end"><strong>@order.Total.ToString("N2")</strong></td>
-    </tr>
-  }
-        </tbody>
-  </table>
-     </div>
-         }
-        else
-         {
-  <div class="text-center py-4">
-<p class="text-muted mb-0">No orders assigned yet</p>
-     </div>
-      }
-         </div>
+            <div class="card-body p-0">
+                @if (Model.Orders.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Customer</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model.Orders.OrderByDescending(o => o.CreatedAt).Take(10))
+                                {
+                                    <tr>
+                                        <td><strong>#@order.Id</strong></td>
+                                        <td>
+                                            <div>@order.CustomerName</div>
+                                            <small class="text-muted">@order.CustomerPhone</small>
+                                        </td>
+                                        <td>
+                                            @switch (order.Status)
+                                            {
+                                                case DeliveryServices.Models.OrderStatus.Pending:
+                                                    <span class="badge bg-warning">Pending</span>
+                                                    break;
+                                                case DeliveryServices.Models.OrderStatus.PickedUp:
+                                                    <span class="badge bg-info">Picked Up</span>
+                                                    break;
+                                                case DeliveryServices.Models.OrderStatus.Delivered:
+                                                    <span class="badge bg-success">Delivered</span>
+                                                    break;
+                                                case DeliveryServices.Models.OrderStatus.Cancelled:
+                                                    <span class="badge bg-danger">Cancelled</span>
+                                                    break;
+                                            }
+                                        </td>
+                                        <td>@order.CreatedAt.ToString("MMM dd, yyyy")</td>
+                                        <td class="text-end"><strong>@order.Total.ToString("N2")</strong></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-0">No orders assigned yet</p>
+                    </div>
+                }
+            </div>
         </div>
 
         <!-- Payment History -->
-   <div class="card">
-   <div class="card-header bg-white d-flex justify-content-between align-items-center">
-    <h6 class="mb-0"><i class="bi bi-receipt"></i> Payment History</h6>
-        <span class="badge bg-success">@Model.SalaryPayments.Count() Payments</span>
- </div>
-        <div class="card-body p-0">
-          @if (Model.SalaryPayments.Any())
-                {
-           <div class="table-responsive">
-             <table class="table table-hover mb-0">
-   <thead class="table-light">
-             <tr>
-              <th>Payment Date</th>
-             <th>Period</th>
-         <th class="text-center">Deliveries</th>
-       <th class="text-end">Base</th>
-        <th class="text-end">Commission</th>
-        <th class="text-end">Total</th>
-   <th>Processed By</th>
-            </tr>
-     </thead>
-            <tbody>
- @foreach (var payment in Model.SalaryPayments.OrderByDescending(p => p.PaymentDate))
-     {
-    <tr>
-       <td>@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
-       <td>
-                 <small>
-         @payment.PeriodStart.ToString("MMM dd") - 
-           @payment.PeriodEnd.ToString("MMM dd, yyyy")
-        </small>
-             </td>
-            <td class="text-center">
-          <span class="badge bg-primary">@payment.DeliveriesCount</span>
-          </td>
-                  <td class="text-end">@payment.BaseSalaryPortion.ToString("N2")</td>
-          <td class="text-end text-success">@payment.CommissionPortion.ToString("N2")</td>
-        <td class="text-end"><strong>@payment.Amount.ToString("N2")</strong></td>
-            <td>
-    <small class="text-muted">@(payment.ProcessedBy ?? "System")</small>
-   </td>
-   </tr>
-     }
-        </tbody>
-        <tfoot class="table-light">
-       <tr>
-             <th colspan="5" class="text-end">Total Paid:</th>
-       <th class="text-end">@Model.SalaryPayments.Sum(p => p.Amount).ToString("N2")</th>
-         <th></th>
-        </tr>
-                </tfoot>
-         </table>
-   </div>
-    }
-      else
-     {
-        <div class="text-center py-4">
-    <p class="text-muted mb-0">No payments processed yet</p>
-          </div>
-    }
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-receipt"></i> Payment History</h6>
+                <span class="badge bg-success">@Model.SalaryPayments.Count() Payments</span>
             </div>
-   </div>
+            <div class="card-body p-0">
+                @if (Model.SalaryPayments.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Payment Date</th>
+                                    <th>Period</th>
+                                    <th class="text-center">Deliveries</th>
+                                    <th class="text-end">Base</th>
+                                    <th class="text-end">Commission</th>
+                                    <th class="text-end">Total</th>
+                                    <th>Processed By</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var payment in Model.SalaryPayments.OrderByDescending(p => p.PaymentDate))
+                                {
+                                    <tr>
+                                        <td>@payment.PaymentDate.ToString("MMM dd, yyyy")</td>
+                                        <td>
+                                            <small>
+                                                @payment.PeriodStart.ToString("MMM dd") -
+                                                @payment.PeriodEnd.ToString("MMM dd, yyyy")
+                                            </small>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-primary">@payment.DeliveriesCount</span>
+                                        </td>
+                                        <td class="text-end">@payment.BaseSalaryPortion.ToString("N2")</td>
+                                        <td class="text-end text-success">@payment.CommissionPortion.ToString("N2")</td>
+                                        <td class="text-end"><strong>@payment.Amount.ToString("N2")</strong></td>
+                                        <td>
+                                            <small class="text-muted">@(payment.ProcessedBy ?? "System")</small>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="5" class="text-end">Total Paid:</th>
+                                    <th class="text-end">@Model.SalaryPayments.Sum(p => p.Amount).ToString("N2")</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-muted mb-0">No payments processed yet</p>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
 </div>

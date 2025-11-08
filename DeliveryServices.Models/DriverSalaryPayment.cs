@@ -5,11 +5,11 @@ namespace DeliveryServices.Models
 {
     public class DriverSalaryPayment
     {
-    [Key]
+        [Key]
         public int Id { get; set; }
 
-   [Required]
-     public int DriverId { get; set; }
+        [Required]
+        public int DriverId { get; set; }
         public virtual Driver Driver { get; set; } = null!;
 
         [Required]
@@ -19,10 +19,10 @@ namespace DeliveryServices.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal BaseSalaryPortion { get; set; }
 
-    [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal CommissionPortion { get; set; }
 
-     public int DeliveriesCount { get; set; }
+        public int DeliveriesCount { get; set; }
 
         [Required]
         public DateTime PaymentDate { get; set; } = DateTime.UtcNow;
@@ -43,6 +43,6 @@ namespace DeliveryServices.Models
         public string? Notes { get; set; }
 
         [StringLength(100)]
-  public string? TransactionReference { get; set; }
+        public string? TransactionReference { get; set; }
     }
 }

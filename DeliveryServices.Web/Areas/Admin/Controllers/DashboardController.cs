@@ -22,16 +22,13 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         {
             var viewModel = new DashboardViewModel();
 
-            // Get all orders
             var allOrders = _unitOfWork.Order.GetAll(includeProperties: "Items").ToList();
 
-            // Statistics
             viewModel.TotalOrders = allOrders.Count;
             viewModel.PendingOrders = allOrders.Count(o => o.Status == OrderStatus.Pending);
             viewModel.DeliveredOrders = allOrders.Count(o => o.Status == OrderStatus.Delivered);
             viewModel.TotalMerchants = _unitOfWork.Merchant.GetAll().Count();
 
-            // Revenue calculations - Only delivery fees are revenue for the delivery service
             var today = DateTime.UtcNow.Date;
             var startOfMonth = new DateTime(today.Year, today.Month, 1);
 
@@ -43,7 +40,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 .Where(o => o.CreatedAt >= startOfMonth && o.Status == OrderStatus.Delivered)
                 .Sum(o => o.DeliveryFee);
 
-            // Recent orders (last 10)
             viewModel.RecentOrders = allOrders
                 .OrderByDescending(o => o.CreatedAt)
                 .Take(10)
@@ -58,12 +54,10 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 })
                 .ToList();
 
-            // Order status distribution for chart
             viewModel.OrderStatusDistribution = allOrders
                 .GroupBy(o => o.Status.ToString())
                 .ToDictionary(g => g.Key, g => g.Count());
 
-            // Daily revenue for last 7 days - Only delivery fees
             var last7Days = Enumerable.Range(0, 7)
                 .Select(i => today.AddDays(-i))
                 .Reverse();

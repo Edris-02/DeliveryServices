@@ -6,133 +6,131 @@
 @section PageHeader {
     <div class="mb-4">
         <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mb-2">
-        <li class="breadcrumb-item"><a asp-action="Index">Drivers</a></li>
-       <li class="breadcrumb-item active">Add New</li>
- </ol>
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-action="Index">Drivers</a></li>
+                <li class="breadcrumb-item active">Add New</li>
+            </ol>
         </nav>
-  <h1 class="h3 mb-0">Add New Driver</h1>
-   <p class="text-muted mb-0">Create a new driver account and configure salary</p>
+        <h1 class="h3 mb-0">Add New Driver</h1>
+        <p class="text-muted mb-0">Create a new driver account and configure salary</p>
     </div>
 }
 
 <div class="row">
     <div class="col-lg-8 mx-auto">
         <div class="card">
-  <div class="card-body p-4">
- <form asp-action="Create" method="post">
-      <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <div class="card-body p-4">
+                <form asp-action="Create" method="post">
 
-            <!-- Personal Information -->
-     <h5 class="mb-3"><i class="bi bi-person-circle"></i> Personal Information</h5>
-               <div class="row g-3 mb-4">
-             <div class="col-md-12">
-          <label asp-for="FullName" class="form-label"></label>
-<input asp-for="FullName" class="form-control" placeholder="Enter driver's full name" />
-       <span asp-validation-for="FullName" class="text-danger small"></span>
-          </div>
+                    <h5 class="mb-3"><i class="bi bi-person-circle"></i> Personal Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-12">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Enter driver's full name" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
 
-     <div class="col-md-6">
-                <label asp-for="Email" class="form-label"></label>
-      <input asp-for="Email" class="form-control" placeholder="driver@example.com" />
-       <span asp-validation-for="Email" class="text-danger small"></span>
-           <small class="text-muted">This will be used for login</small>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="driver@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                            <small class="text-muted">This will be used for login</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label"></label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="(123) 456-7890" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" placeholder="Street address" />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Vehicle Information -->
+                    <h5 class="mb-3"><i class="bi bi-car-front"></i> Vehicle Information</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="LicenseNumber" class="form-label"></label>
+                            <input asp-for="LicenseNumber" class="form-control" placeholder="DL123456" />
+                            <span asp-validation-for="LicenseNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="VehicleType" class="form-label"></label>
+                            <select asp-for="VehicleType" class="form-select">
+                                <option value="">Select vehicle type</option>
+                                <option value="Motorcycle">Motorcycle</option>
+                                <option value="Car">Car</option>
+                                <option value="Van">Van</option>
+                                <option value="Truck">Truck</option>
+                                <option value="Bicycle">Bicycle</option>
+                            </select>
+                            <span asp-validation-for="VehicleType" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="VehiclePlateNumber" class="form-label"></label>
+                            <input asp-for="VehiclePlateNumber" class="form-control" placeholder="ABC-123" />
+                            <span asp-validation-for="VehiclePlateNumber" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr />
+
+                    <!-- Salary Configuration -->
+                    <h5 class="mb-3"><i class="bi bi-cash-coin"></i> Salary Configuration</h5>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="BaseSalary" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="BaseSalary" class="form-control" placeholder="0.00" value="0" />
+                            </div>
+                            <span asp-validation-for="BaseSalary" class="text-danger small"></span>
+                            <small class="text-muted">Annual base salary (will be divided by 12 for monthly payment)</small>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CommissionPerDelivery" class="form-label"></label>
+                            <div class="input-group">
+                                <input asp-for="CommissionPerDelivery" class="form-control" placeholder="5.00" value="5.00" />
+                            </div>
+                            <span asp-validation-for="CommissionPerDelivery" class="text-danger small"></span>
+                            <small class="text-muted">Extra payment per successful delivery</small>
+                        </div>
+                    </div>
+
+                    <!-- Info Box -->
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Automatic User Account Creation</h6>
+                        <p class="mb-0 small">
+                            A user account will be automatically created for this driver with:
+                        </p>
+                        <ul class="mb-0 small mt-2">
+                            <li>Username: <strong>Email address</strong></li>
+                            <li>Password: <strong>FirstName@123</strong> (e.g., John@123)</li>
+                            <li>Role: <strong>Driver</strong></li>
+                        </ul>
+                        <p class="mb-0 small mt-2 text-muted">
+                            The driver can login immediately with these credentials.
+                        </p>
+                    </div>
+
+                    <div class="d-flex gap-2 justify-content-end mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Create Driver
+                        </button>
+                    </div>
+                </form>
             </div>
-
-                   <div class="col-md-6">
-           <label asp-for="PhoneNumber" class="form-label"></label>
-         <input asp-for="PhoneNumber" class="form-control" placeholder="(123) 456-7890" />
-             <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
-        </div>
-
-   <div class="col-md-12">
-           <label asp-for="Address" class="form-label"></label>
-                <input asp-for="Address" class="form-control" placeholder="Street address" />
-           <span asp-validation-for="Address" class="text-danger small"></span>
- </div>
-  </div>
-
-        <hr />
-
-           <!-- Vehicle Information -->
-        <h5 class="mb-3"><i class="bi bi-car-front"></i> Vehicle Information</h5>
-    <div class="row g-3 mb-4">
-             <div class="col-md-6">
-  <label asp-for="LicenseNumber" class="form-label"></label>
-     <input asp-for="LicenseNumber" class="form-control" placeholder="DL123456" />
- <span asp-validation-for="LicenseNumber" class="text-danger small"></span>
-        </div>
-
-   <div class="col-md-6">
-     <label asp-for="VehicleType" class="form-label"></label>
-          <select asp-for="VehicleType" class="form-select">
-    <option value="">Select vehicle type</option>
-     <option value="Motorcycle">Motorcycle</option>
-     <option value="Car">Car</option>
- <option value="Van">Van</option>
-       <option value="Truck">Truck</option>
-  <option value="Bicycle">Bicycle</option>
-</select>
-<span asp-validation-for="VehicleType" class="text-danger small"></span>
-   </div>
-
-             <div class="col-md-6">
-         <label asp-for="VehiclePlateNumber" class="form-label"></label>
-   <input asp-for="VehiclePlateNumber" class="form-control" placeholder="ABC-123" />
-           <span asp-validation-for="VehiclePlateNumber" class="text-danger small"></span>
-     </div>
-    </div>
-
- <hr />
-
-   <!-- Salary Configuration -->
-      <h5 class="mb-3"><i class="bi bi-cash-coin"></i> Salary Configuration</h5>
-       <div class="row g-3 mb-4">
-                <div class="col-md-6">
-         <label asp-for="BaseSalary" class="form-label"></label>
-           <div class="input-group">
-       <input asp-for="BaseSalary" class="form-control" placeholder="0.00" value="0" />
-           </div>
-      <span asp-validation-for="BaseSalary" class="text-danger small"></span>
-          <small class="text-muted">Annual base salary (will be divided by 12 for monthly payment)</small>
-            </div>
-
-        <div class="col-md-6">
-       <label asp-for="CommissionPerDelivery" class="form-label"></label>
-  <div class="input-group">
-   <input asp-for="CommissionPerDelivery" class="form-control" placeholder="5.00" value="5.00" />
-           </div>
-            <span asp-validation-for="CommissionPerDelivery" class="text-danger small"></span>
-           <small class="text-muted">Extra payment per successful delivery</small>
-       </div>
-           </div>
-
-               <!-- Info Box -->
-      <div class="alert alert-info">
-         <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Automatic User Account Creation</h6>
- <p class="mb-0 small">
-         A user account will be automatically created for this driver with:
-            </p>
-       <ul class="mb-0 small mt-2">
-      <li>Username: <strong>Email address</strong></li>
-           <li>Password: <strong>FirstName@123</strong> (e.g., John@123)</li>
-              <li>Role: <strong>Driver</strong></li>
-              </ul>
-            <p class="mb-0 small mt-2 text-muted">
-  The driver can login immediately with these credentials.
-            </p>
-     </div>
-
-       <div class="d-flex gap-2 justify-content-end mt-4">
-   <a asp-action="Index" class="btn btn-outline-secondary">
-             <i class="bi bi-x-circle"></i> Cancel
-        </a>
-            <button type="submit" class="btn btn-primary">
-       <i class="bi bi-check-circle"></i> Create Driver
-       </button>
-               </div>
-   </form>
-   </div>
         </div>
     </div>
 </div>

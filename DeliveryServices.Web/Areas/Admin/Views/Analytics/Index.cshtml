@@ -6,16 +6,16 @@
 @section PageHeader {
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-          <h1 class="h3 mb-1">
-  <i class="bi bi-graph-up-arrow text-primary me-2"></i>Analytics Dashboard
-        </h1>
-<p class="text-secondary mb-0">Advanced analytics and performance metrics</p>
+            <h1 class="h3 mb-1">
+                <i class="bi bi-graph-up-arrow text-primary me-2"></i>Analytics Dashboard
+            </h1>
+            <p class="text-secondary mb-0">Advanced analytics and performance metrics</p>
         </div>
         <div>
-<button class="btn btn-outline-primary" onclick="location.reload()">
-       <i class="bi bi-arrow-clockwise me-2"></i>Refresh Data
+            <button class="btn btn-outline-primary" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Refresh Data
             </button>
-    </div>
+        </div>
     </div>
 }
 
@@ -23,64 +23,64 @@
 <div class="row g-3 mb-4">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100">
-       <div class="card-body">
-<div class="d-flex align-items-center">
-        <div class="stat-card-icon bg-primary bg-opacity-10 text-primary me-3">
-                  <i class="bi bi-basket"></i>
-      </div>
-   <div class="flex-grow-1">
- <div class="text-secondary small mb-1">Avg Order Value</div>
-   <h4 class="mb-0">@Model.AverageOrderValue.ToString("C2")</h4>
-   </div>
-       </div>
-            </div>
-     </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100">
-       <div class="card-body">
-        <div class="d-flex align-items-center">
-               <div class="stat-card-icon bg-success bg-opacity-10 text-success me-3">
-   <i class="bi bi-truck"></i>
-        </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-card-icon bg-primary bg-opacity-10 text-primary me-3">
+                        <i class="bi bi-basket"></i>
+                    </div>
                     <div class="flex-grow-1">
-           <div class="text-secondary small mb-1">Avg Delivery Fee</div>
-         <h4 class="mb-0">@Model.AverageDeliveryFee.ToString("C2")</h4>
-         </div>
-       </div>
- </div>
+                        <div class="text-secondary small mb-1">Avg Order Value</div>
+                        <h4 class="mb-0">@Model.AverageOrderValue.ToString("C2")</h4>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100">
-      <div class="card-body">
-   <div class="d-flex align-items-center">
-      <div class="stat-card-icon bg-info bg-opacity-10 text-info me-3">
-<i class="bi bi-check-circle"></i>
-          </div>
-   <div class="flex-grow-1">
-            <div class="text-secondary small mb-1">Completion Rate</div>
-       <h4 class="mb-0">@Model.OrderCompletionRate.ToString("F1")%</h4>
- </div>
-     </div>
-</div>
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-card-icon bg-success bg-opacity-10 text-success me-3">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-secondary small mb-1">Avg Delivery Fee</div>
+                        <h4 class="mb-0">@Model.AverageDeliveryFee.ToString("C2")</h4>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
-      <div class="card border-0 shadow-sm h-100">
-   <div class="card-body">
-    <div class="d-flex align-items-center">
-       <div class="stat-card-icon bg-warning bg-opacity-10 text-warning me-3">
-            <i class="bi bi-box-seam"></i>
-     </div>
-    <div class="flex-grow-1">
-                  <div class="text-secondary small mb-1">Avg Items/Order</div>
-    <h4 class="mb-0">@Model.AverageItemsPerOrder.ToString("F1")</h4>
-  </div>
-      </div>
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-card-icon bg-info bg-opacity-10 text-info me-3">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-secondary small mb-1">Completion Rate</div>
+                        <h4 class="mb-0">@Model.OrderCompletionRate.ToString("F1")%</h4>
+                    </div>
+                </div>
             </div>
         </div>
-  </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-card-icon bg-warning bg-opacity-10 text-warning me-3">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-secondary small mb-1">Avg Items/Order</div>
+                        <h4 class="mb-0">@Model.AverageItemsPerOrder.ToString("F1")</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Growth Metrics -->
@@ -88,74 +88,74 @@
     <div class="col-md-6">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
-   <div class="d-flex align-items-center">
-    <div class="stat-card-icon @(Model.OrderGrowthPercent >= 0 ? "bg-success" : "bg-danger") bg-opacity-10 @(Model.OrderGrowthPercent >= 0 ? "text-success" : "text-danger") me-3">
-      <i class="bi @(Model.OrderGrowthPercent >= 0 ? "bi-arrow-up" : "bi-arrow-down")"></i>
-    </div>
-       <div class="flex-grow-1">
-         <div class="text-secondary small mb-1">Order Growth (Month over Month)</div>
-          <h4 class="mb-0 @(Model.OrderGrowthPercent >= 0 ? "text-success" : "text-danger")">
-       @Model.OrderGrowthPercent.ToString("F1")%
-  </h4>
-      </div>
-     </div>
-          </div>
-  </div>
+                <div class="d-flex align-items-center">
+                    <div class="stat-card-icon @(Model.OrderGrowthPercent >= 0 ? "bg-success" : "bg-danger") bg-opacity-10 @(Model.OrderGrowthPercent >= 0 ? "text-success" : "text-danger") me-3">
+                        <i class="bi @(Model.OrderGrowthPercent >= 0 ? "bi-arrow-up" : "bi-arrow-down")"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-secondary small mb-1">Order Growth (Month over Month)</div>
+                        <h4 class="mb-0 @(Model.OrderGrowthPercent >= 0 ? "text-success" : "text-danger")">
+                            @Model.OrderGrowthPercent.ToString("F1")%
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-  <div class="card border-0 shadow-sm h-100">
-    <div class="card-body">
-    <div class="d-flex align-items-center">
-        <div class="stat-card-icon @(Model.RevenueGrowthPercent >= 0 ? "bg-success" : "bg-danger") bg-opacity-10 @(Model.RevenueGrowthPercent >= 0 ? "text-success" : "text-danger") me-3">
-         <i class="bi @(Model.RevenueGrowthPercent >= 0 ? "bi-arrow-up" : "bi-arrow-down")"></i>
- </div>
-   <div class="flex-grow-1">
-      <div class="text-secondary small mb-1">Revenue Growth (Month over Month)</div>
-        <h4 class="mb-0 @(Model.RevenueGrowthPercent >= 0 ? "text-success" : "text-danger")">
-    @Model.RevenueGrowthPercent.ToString("F1")%
-      </h4>
- </div>
-    </div>
-    </div>
- </div>
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="stat-card-icon @(Model.RevenueGrowthPercent >= 0 ? "bg-success" : "bg-danger") bg-opacity-10 @(Model.RevenueGrowthPercent >= 0 ? "text-success" : "text-danger") me-3">
+                        <i class="bi @(Model.RevenueGrowthPercent >= 0 ? "bi-arrow-up" : "bi-arrow-down")"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="text-secondary small mb-1">Revenue Growth (Month over Month)</div>
+                        <h4 class="mb-0 @(Model.RevenueGrowthPercent >= 0 ? "text-success" : "text-danger")">
+                            @Model.RevenueGrowthPercent.ToString("F1")%
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- Resource Statistics -->
 <div class="row g-3 mb-4">
     <div class="col-md-12">
- <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white">
-         <h5 class="mb-0"><i class="bi bi-people me-2"></i>Resource Statistics</h5>
-       </div>
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-people me-2"></i>Resource Statistics</h5>
+            </div>
             <div class="card-body">
-        <div class="row g-3">
-      <div class="col-md-2 text-center">
-        <div class="display-6 text-primary">@Model.TotalDrivers</div>
-   <div class="text-secondary small">Total Drivers</div>
-  </div>
-      <div class="col-md-2 text-center">
-     <div class="display-6 text-success">@Model.ActiveDrivers</div>
-     <div class="text-secondary small">Active Drivers</div>
-      </div>
-        <div class="col-md-2 text-center">
-        <div class="display-6 text-info">@Model.DriverUtilizationRate.ToString("F1")%</div>
-   <div class="text-secondary small">Driver Utilization</div>
- </div>
-           <div class="col-md-2 text-center">
-    <div class="display-6 text-primary">@Model.TotalMerchants</div>
-     <div class="text-secondary small">Total Merchants</div>
-     </div>
-        <div class="col-md-2 text-center">
-        <div class="display-6 text-success">@Model.ActiveMerchants</div>
-              <div class="text-secondary small">Active Merchants</div>
-        </div>
-               <div class="col-md-2 text-center">
-   <div class="display-6 text-warning">@Model.NewMerchantsThisMonth</div>
-   <div class="text-secondary small">New This Month</div>
-        </div>
-  </div>
-   </div>
+                <div class="row g-3">
+                    <div class="col-md-2 text-center">
+                        <div class="display-6 text-primary">@Model.TotalDrivers</div>
+                        <div class="text-secondary small">Total Drivers</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="display-6 text-success">@Model.ActiveDrivers</div>
+                        <div class="text-secondary small">Active Drivers</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="display-6 text-info">@Model.DriverUtilizationRate.ToString("F1")%</div>
+                        <div class="text-secondary small">Driver Utilization</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="display-6 text-primary">@Model.TotalMerchants</div>
+                        <div class="text-secondary small">Total Merchants</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="display-6 text-success">@Model.ActiveMerchants</div>
+                        <div class="text-secondary small">Active Merchants</div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        <div class="display-6 text-warning">@Model.NewMerchantsThisMonth</div>
+                        <div class="text-secondary small">New This Month</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -165,45 +165,45 @@
     <div class="col-md-8">
         <div class="card border-0 shadow-sm h-100">
             <div class="card-header bg-white">
-   <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Daily Order Trend (Last 30 Days)</h5>
+                <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Daily Order Trend (Last 30 Days)</h5>
             </div>
-  <div class="card-body">
-        <canvas id="dailyTrendChart" height="80"></canvas>
-          </div>
+            <div class="card-body">
+                <canvas id="dailyTrendChart" height="80"></canvas>
+            </div>
         </div>
     </div>
     <div class="col-md-4">
         <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-white">
-           <h5 class="mb-0"><i class="bi bi-calendar-day me-2"></i>Orders by Day of Week</h5>
-         </div>
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-calendar-day me-2"></i>Orders by Day of Week</h5>
+            </div>
             <div class="card-body">
-     <canvas id="dayOfWeekChart"></canvas>
+                <canvas id="dayOfWeekChart"></canvas>
+            </div>
         </div>
-     </div>
     </div>
 </div>
 
 <!-- Charts Row 2 -->
 <div class="row g-3 mb-4">
     <div class="col-md-6">
-  <div class="card border-0 shadow-sm h-100">
-        <div class="card-header bg-white">
-       <h5 class="mb-0"><i class="bi bi-clock me-2"></i>Hourly Order Distribution</h5>
-       </div>
-    <div class="card-body">
-     <canvas id="hourlyChart" height="120"></canvas>
-       </div>
-     </div>
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-clock me-2"></i>Hourly Order Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="hourlyChart" height="120"></canvas>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-    <div class="card border-0 shadow-sm h-100">
-         <div class="card-header bg-white">
-              <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Revenue by Merchant (Top 10)</h5>
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-shop me-2"></i>Revenue by Merchant (Top 10)</h5>
             </div>
-          <div class="card-body">
-     <canvas id="merchantRevenueChart" height="120"></canvas>
-         </div>
+            <div class="card-body">
+                <canvas id="merchantRevenueChart" height="120"></canvas>
+            </div>
         </div>
     </div>
 </div>
@@ -212,32 +212,32 @@
 <div class="row g-3 mb-4">
     <div class="col-md-12">
         <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white">
-   <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Peak Hours</h5>
+            <div class="card-header bg-white">
+                <h5 class="mb-0"><i class="bi bi-lightning me-2"></i>Peak Hours</h5>
             </div>
             <div class="card-body">
-  @if (Model.PeakHours.Any())
-   {
+                @if (Model.PeakHours.Any())
+                {
                     <div class="row g-3">
-   @foreach (var peak in Model.PeakHours)
- {
-   <div class="col-md-2">
-    <div class="text-center p-3 bg-light rounded">
-              <div class="h5 mb-1 text-primary">@peak.Hour</div>
-         <div class="text-secondary">@peak.OrderCount orders</div>
-             </div>
-        </div>
-   }
-           </div>
-  }
-     else
-     {
-      <div class="text-center py-3 text-secondary">
-            <i class="bi bi-inbox display-6"></i>
-     <p class="mt-2">No peak hour data available</p>
-        </div>
-    }
-        </div>
+                        @foreach (var peak in Model.PeakHours)
+                        {
+                            <div class="col-md-2">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <div class="h5 mb-1 text-primary">@peak.Hour</div>
+                                    <div class="text-secondary">@peak.OrderCount orders</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-3 text-secondary">
+                        <i class="bi bi-inbox display-6"></i>
+                        <p class="mt-2">No peak hour data available</p>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>
@@ -245,148 +245,147 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script>
-   // Daily Trend Chart
-        const dailyCtx = document.getElementById('dailyTrendChart');
-        if (dailyCtx) {
- const dailyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyOrderTrend));
-   new Chart(dailyCtx, {
-   type: 'line',
-      data: {
-     labels: Object.keys(dailyData),
-     datasets: [{
-            label: 'Orders',
-                data: Object.values(dailyData),
-   borderColor: 'rgba(13, 110, 253, 1)',
-        backgroundColor: 'rgba(13, 110, 253, 0.1)',
-       borderWidth: 2,
-    fill: true,
-       tension: 0.4
-          }]
-      },
- options: {
-  responsive: true,
-    maintainAspectRatio: true,
-           plugins: {
-          legend: { display: false }
-               },
- scales: {
-       y: {
-   beginAtZero: true,
-           ticks: {
-      stepSize: 1
-      }
-            }
-         }
-     }
-        });
-        }
-
-        // Day of Week Chart
-        const dayCtx = document.getElementById('dayOfWeekChart');
-        if (dayCtx) {
-            const dayData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OrdersByDayOfWeek));
-        new Chart(dayCtx, {
-     type: 'doughnut',
-        data: {
-  labels: Object.keys(dayData),
-      datasets: [{
-         data: Object.values(dayData),
-     backgroundColor: [
-  'rgba(255, 99, 132, 0.8)',
-      'rgba(54, 162, 235, 0.8)',
-            'rgba(255, 206, 86, 0.8)',
-             'rgba(75, 192, 192, 0.8)',
-             'rgba(153, 102, 255, 0.8)',
-'rgba(255, 159, 64, 0.8)',
-      'rgba(199, 199, 199, 0.8)'
-      ],
-         borderWidth: 2,
-          borderColor: '#fff'
-        }]
-   },
-       options: {
-             responsive: true,
-     maintainAspectRatio: true,
-          plugins: {
-           legend: {
-                 position: 'bottom'
-  }
-            }
-    }
- });
-        }
-
-        // Hourly Chart
-        const hourlyCtx = document.getElementById('hourlyChart');
-   if (hourlyCtx) {
-     const hourlyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HourlyOrderDistribution));
-     new Chart(hourlyCtx, {
-   type: 'bar',
-      data: {
-              labels: Object.keys(hourlyData),
-           datasets: [{
-        label: 'Orders',
-             data: Object.values(hourlyData),
-                 backgroundColor: 'rgba(13, 202, 240, 0.8)',
-     borderColor: 'rgba(13, 202, 240, 1)',
-    borderWidth: 1,
-     borderRadius: 4
-  }]
-   },
-  options: {
-     responsive: true,
-    maintainAspectRatio: true,
-          plugins: {
- legend: { display: false }
-       },
+           // Daily Trend Chart
+                const dailyCtx = document.getElementById('dailyTrendChart');
+                if (dailyCtx) {
+         const dailyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.DailyOrderTrend));
+           new Chart(dailyCtx, {
+           type: 'line',
+              data: {
+             labels: Object.keys(dailyData),
+             datasets: [{
+                    label: 'Orders',
+                        data: Object.values(dailyData),
+           borderColor: 'rgba(13, 110, 253, 1)',
+                backgroundColor: 'rgba(13, 110, 253, 0.1)',
+               borderWidth: 2,
+            fill: true,
+               tension: 0.4
+                  }]
+              },
+         options: {
+          responsive: true,
+            maintainAspectRatio: true,
+                   plugins: {
+                  legend: { display: false }
+                       },
          scales: {
-  y: {
-         beginAtZero: true,
-         ticks: {
-      stepSize: 1
-                  }
-         }
-  }
-       }
-   });
-        }
-
-        // Merchant Revenue Chart
-        const merchantCtx = document.getElementById('merchantRevenueChart');
-        if (merchantCtx) {
-    const merchantData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueByMerchant));
-            new Chart(merchantCtx, {
-    type: 'bar',
-      data: {
-              labels: Object.keys(merchantData),
-        datasets: [{
-          label: 'Revenue',
-             data: Object.values(merchantData),
- backgroundColor: 'rgba(25, 135, 84, 0.8)',
-           borderColor: 'rgba(25, 135, 84, 1)',
-         borderWidth: 1,
-     borderRadius: 4
-            }]
-     },
-          options: {
-          indexAxis: 'y',
-      responsive: true,
-           maintainAspectRatio: true,
-     plugins: {
-                legend: { display: false }
-     },
-         scales: {
-      x: {
-     beginAtZero: true,
-        ticks: {
-      callback: function(value) {
-    return '$' + value.toFixed(0);
-    }
+               y: {
+           beginAtZero: true,
+                   ticks: {
+              stepSize: 1
               }
-  }
-         }
-    }
-            });
-   }
+                    }
+                 }
+             }
+                });
+                }
+
+                // Day of Week Chart
+                const dayCtx = document.getElementById('dayOfWeekChart');
+                if (dayCtx) {
+                    const dayData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.OrdersByDayOfWeek));
+                new Chart(dayCtx, {
+             type: 'doughnut',
+                data: {
+          labels: Object.keys(dayData),
+              datasets: [{
+                 data: Object.values(dayData),
+             backgroundColor: [
+          'rgba(255, 99, 132, 0.8)',
+              'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                     'rgba(75, 192, 192, 0.8)',
+                     'rgba(153, 102, 255, 0.8)',
+        'rgba(255, 159, 64, 0.8)',
+              'rgba(199, 199, 199, 0.8)'
+              ],
+                 borderWidth: 2,
+                  borderColor: '#fff'
+                }]
+           },
+               options: {
+                     responsive: true,
+             maintainAspectRatio: true,
+                  plugins: {
+                   legend: {
+                         position: 'bottom'
+          }
+                    }
+            }
+         });
+                }
+
+                // Hourly Chart
+                const hourlyCtx = document.getElementById('hourlyChart');
+           if (hourlyCtx) {
+             const hourlyData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.HourlyOrderDistribution));
+             new Chart(hourlyCtx, {
+           type: 'bar',
+              data: {
+                      labels: Object.keys(hourlyData),
+                   datasets: [{
+                label: 'Orders',
+                     data: Object.values(hourlyData),
+                         backgroundColor: 'rgba(13, 202, 240, 0.8)',
+             borderColor: 'rgba(13, 202, 240, 1)',
+            borderWidth: 1,
+             borderRadius: 4
+          }]
+           },
+          options: {
+             responsive: true,
+            maintainAspectRatio: true,
+                  plugins: {
+         legend: { display: false }
+               },
+                 scales: {
+          y: {
+                 beginAtZero: true,
+                 ticks: {
+              stepSize: 1
+                          }
+                 }
+          }
+               }
+           });
+                }
+
+                const merchantCtx = document.getElementById('merchantRevenueChart');
+                if (merchantCtx) {
+            const merchantData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueByMerchant));
+                    new Chart(merchantCtx, {
+            type: 'bar',
+              data: {
+                      labels: Object.keys(merchantData),
+                datasets: [{
+                  label: 'Revenue',
+                     data: Object.values(merchantData),
+         backgroundColor: 'rgba(25, 135, 84, 0.8)',
+                   borderColor: 'rgba(25, 135, 84, 1)',
+                 borderWidth: 1,
+             borderRadius: 4
+                    }]
+             },
+                  options: {
+                  indexAxis: 'y',
+              responsive: true,
+                   maintainAspectRatio: true,
+             plugins: {
+                        legend: { display: false }
+             },
+                 scales: {
+              x: {
+             beginAtZero: true,
+                ticks: {
+              callback: function(value) {
+            return '$' + value.toFixed(0);
+            }
+                      }
+          }
+                 }
+            }
+                    });
+           }
     </script>
 }

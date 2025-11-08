@@ -4,6 +4,6 @@ namespace DeliveryServices.DataAccess.Repository.IRepository
 {
     public interface IDriverRepository : IRepository<Driver>
     {
- void Update(Driver driver);
+        void Update(Driver driver);
     }
 }

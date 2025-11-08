@@ -4,31 +4,31 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DeliveryServices.Models
 {
     public class Driver
-  {
+    {
         [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Driver name is required")]
         [StringLength(100)]
-    [Display(Name = "Full Name")]
+        [Display(Name = "Full Name")]
         public string FullName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Phone number is required")]
         [Phone]
         [StringLength(20)]
         [Display(Name = "Phone Number")]
- public string PhoneNumber { get; set; } = string.Empty;
+        public string PhoneNumber { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress]
         [StringLength(100)]
         public string Email { get; set; } = string.Empty;
 
-   [StringLength(200)]
+        [StringLength(200)]
         public string? Address { get; set; }
 
         [StringLength(50)]
-      [Display(Name = "License Number")]
+        [Display(Name = "License Number")]
         public string? LicenseNumber { get; set; }
 
         [StringLength(50)]
@@ -37,27 +37,25 @@ namespace DeliveryServices.Models
 
         [StringLength(20)]
         [Display(Name = "Vehicle Plate Number")]
-      public string? VehiclePlateNumber { get; set; }
+        public string? VehiclePlateNumber { get; set; }
 
-        // Salary configuration
         [Display(Name = "Base Salary")]
-  [Column(TypeName = "decimal(18,2)")]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal BaseSalary { get; set; } = 0;
 
         [Display(Name = "Commission Per Delivery")]
-     [Column(TypeName = "decimal(18,2)")]
- public decimal CommissionPerDelivery { get; set; } = 5.00m; // Default $5 per delivery
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal CommissionPerDelivery { get; set; } = 5.00m; 
 
-        // Tracking
         [Display(Name = "Total Deliveries")]
         public int TotalDeliveries { get; set; } = 0;
 
         [Display(Name = "Current Month Deliveries")]
-   public int CurrentMonthDeliveries { get; set; } = 0;
+        public int CurrentMonthDeliveries { get; set; } = 0;
 
         [Display(Name = "Total Earnings")]
         [Column(TypeName = "decimal(18,2)")]
-    public decimal TotalEarnings { get; set; } = 0;
+        public decimal TotalEarnings { get; set; } = 0;
 
         [Display(Name = "Current Balance")]
         [Column(TypeName = "decimal(18,2)")]
@@ -66,26 +64,23 @@ namespace DeliveryServices.Models
         [Display(Name = "Is Active")]
         public bool IsActive { get; set; } = true;
 
-     [Display(Name = "Joined Date")]
+        [Display(Name = "Joined Date")]
         public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
 
-      // Link to ApplicationUser
         public string? UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
 
-        // Navigation properties
         public virtual ICollection<Orders> Orders { get; set; } = new List<Orders>();
-     public virtual ICollection<DriverSalaryPayment> SalaryPayments { get; set; } = new List<DriverSalaryPayment>();
+        public virtual ICollection<DriverSalaryPayment> SalaryPayments { get; set; } = new List<DriverSalaryPayment>();
 
-  // Computed properties
         [NotMapped]
         [Display(Name = "This Month Earnings")]
-        public decimal CurrentMonthEarnings => 
+        public decimal CurrentMonthEarnings =>
    (BaseSalary / 12) + (CurrentMonthDeliveries * CommissionPerDelivery);
 
         [NotMapped]
         [Display(Name = "Average Earnings Per Delivery")]
-        public decimal AverageEarningsPerDelivery => 
+        public decimal AverageEarningsPerDelivery =>
          TotalDeliveries > 0 ? TotalEarnings / TotalDeliveries : 0;
     }
 }

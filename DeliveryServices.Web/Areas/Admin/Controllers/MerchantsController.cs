@@ -45,7 +45,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Merchants merchant)
         {
-            // Remove validation errors for navigation properties
             ModelState.Remove("Orders");
             ModelState.Remove("Payouts");
             ModelState.Remove("User");
@@ -57,7 +56,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
             try
             {
-                // Check if email already exists
                 var existingUser = await _userManager.FindByEmailAsync(merchant.Email);
                 if (existingUser != null)
                 {
@@ -65,17 +63,15 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     return View(merchant);
                 }
 
-                // Create ApplicationUser for the merchant
                 var user = new ApplicationUser
                 {
-                    UserName = merchant.Email,  // Use email as username
+                    UserName = merchant.Email,
                     Email = merchant.Email,
                     FullName = merchant.Name,
                     PhoneNumber = merchant.PhoneNumber,
                     EmailConfirmed = true
                 };
 
-                // Generate default password: FirstName@123 (same logic as drivers)
                 var defaultPassword = $"{merchant.Name.Split(' ')[0]}@123";
                 var result = await _userManager.CreateAsync(user, defaultPassword);
 
@@ -86,19 +82,15 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                     return View(merchant);
                 }
 
-                // Assign Merchant role
                 await _userManager.AddToRoleAsync(user, UserRoles.Merchant);
 
-                // Link merchant to user
                 merchant.UserId = user.Id;
                 merchant.CurrentBalance = 0m;
                 merchant.TotalPaidOut = 0m;
 
-                // Save merchant
                 _unitOfWork.Merchant.Add(merchant);
                 _unitOfWork.Save();
 
-                // Update user with MerchantId
                 user.MerchantId = merchant.Id;
                 await _userManager.UpdateAsync(user);
 
@@ -126,7 +118,6 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Merchants merchant)
         {
-            // Remove validation errors for navigation properties
             ModelState.Remove("Orders");
             ModelState.Remove("Payouts");
             ModelState.Remove("User");

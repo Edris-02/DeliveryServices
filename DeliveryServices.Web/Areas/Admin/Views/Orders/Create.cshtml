@@ -25,7 +25,6 @@
             </div>
             <div class="card-body">
                 <form method="post" asp-action="Create" asp-controller="Orders">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
@@ -106,5 +105,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

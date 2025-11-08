@@ -69,7 +69,6 @@
                             {
                                 DeliveryServices.Models.OrderStatus.Pending => "bg-warning",
                                 DeliveryServices.Models.OrderStatus.PickedUp => "bg-info",
-                                DeliveryServices.Models.OrderStatus.InTransit => "bg-primary",
                                 DeliveryServices.Models.OrderStatus.Delivered => "bg-success",
                                 DeliveryServices.Models.OrderStatus.Cancelled => "bg-danger",
                                 _ => "bg-secondary"
@@ -108,7 +107,7 @@
                                     <small>@order.CreatedAt.ToString("HH:mm")</small>
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("Details", "Orders", new { id = order.Id, area = "Admin" })" 
+                                    <a href="@Url.Action("Details", "Orders", new { id = order.Id, area = "Admin" })"
                                        class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i> View
                                     </a>
@@ -144,7 +143,7 @@
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 const statusCell = row.querySelector('td:nth-child(10)').textContent.trim();
-                
+
                 const matchesSearch = text.includes(searchTerm);
                 const matchesStatus = !statusValue || statusCell === statusValue;
 

@@ -8,20 +8,20 @@ namespace DeliveryServices.Web.ViewComponents
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-    public CurrentUserViewComponent(UserManager<ApplicationUser> userManager)
+        public CurrentUserViewComponent(UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-    }
+        }
 
         public async Task<IViewComponentResult> InvokeAsync()
-  {
-       if (User.Identity?.IsAuthenticated == true)
+        {
+            if (User.Identity?.IsAuthenticated == true)
             {
-   var user = await _userManager.GetUserAsync(UserClaimsPrincipal);
-  return View(user);
-      }
+                var user = await _userManager.GetUserAsync(UserClaimsPrincipal);
+                return View(user);
+            }
 
-    return View(null);
+            return View(null);
         }
     }
 }

@@ -31,21 +31,16 @@ namespace DeliveryServices.Models
         [StringLength(250)]
         public string Address { get; set; }
 
-        // Current balance owed to merchant (total of delivered orders minus payouts)
         public decimal CurrentBalance { get; set; } = 0m;
 
-        // Total amount paid to merchant historically
         public decimal TotalPaidOut { get; set; } = 0m;
 
-        // Link to ApplicationUser account
         public string? UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
 
-        // Navigation properties
         public virtual ICollection<Orders> Orders { get; set; } = new List<Orders>();
         public virtual ICollection<MerchantPayouts> Payouts { get; set; } = new List<MerchantPayouts>();
 
-        // Computed properties
         [NotMapped]
         public decimal TotalRevenue => Orders?.Where(o => o.Status == OrderStatus.Delivered).Sum(o => o.SubTotal) ?? 0m;
 

@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DeliveryServices.Models
 {
-    // Represents a payment made to a merchant
     public class MerchantPayouts
     {
         [Key]
@@ -21,9 +20,9 @@ namespace DeliveryServices.Models
         public string? Notes { get; set; }
 
         [StringLength(100)]
-        public string? PaymentMethod { get; set; } // Cash, Bank Transfer, etc.
+        public string? PaymentMethod { get; set; } 
 
         [StringLength(100)]
-        public string? ProcessedBy { get; set; } // Who processed this payment
+        public string? ProcessedBy { get; set; } 
     }
 }

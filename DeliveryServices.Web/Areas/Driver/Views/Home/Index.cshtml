@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Dashboard";
     var pendingDeliveries = Model.Orders.Count(o => o.Status == DeliveryServices.Models.OrderStatus.Pending);
-    var inTransitDeliveries = Model.Orders.Count(o => o.Status == DeliveryServices.Models.OrderStatus.InTransit || o.Status == DeliveryServices.Models.OrderStatus.PickedUp);
+    var inTransitDeliveries = Model.Orders.Count(o => o.Status == DeliveryServices.Models.OrderStatus.PickedUp);
     var deliveredOrders = Model.Orders.Count(o => o.Status == DeliveryServices.Models.OrderStatus.Delivered);
     var recentDeliveries = Model.Orders.OrderByDescending(o => o.CreatedAt).Take(5).ToList();
 }
@@ -155,7 +155,6 @@ View All
     {
             DeliveryServices.Models.OrderStatus.Pending => "bg-warning",
        DeliveryServices.Models.OrderStatus.PickedUp => "bg-info",
-        DeliveryServices.Models.OrderStatus.InTransit => "bg-primary",
     DeliveryServices.Models.OrderStatus.Delivered => "bg-success",
       DeliveryServices.Models.OrderStatus.Cancelled => "bg-danger",
         _ => "bg-secondary"

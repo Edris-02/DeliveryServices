@@ -37,7 +37,6 @@
 
                 <form method="post" asp-action="Create" asp-controller="MerchantPayouts">
                     <input type="hidden" asp-for="MerchantId" />
-                    <div asp-validation-summary="All" class="alert alert-danger"></div>
 
                     <div class="mb-3">
                         <label asp-for="Amount" class="form-label">Payout Amount <span class="text-danger">*</span></label>
@@ -92,5 +91,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -5,7 +5,6 @@ namespace DeliveryServices.Models.ViewModels
 {
     public class DashboardViewModel
     {
-        // Statistics
         public int TotalOrders { get; set; }
         public int PendingOrders { get; set; }
         public int DeliveredOrders { get; set; }
@@ -13,10 +12,8 @@ namespace DeliveryServices.Models.ViewModels
         public decimal TodayRevenue { get; set; }
         public decimal MonthRevenue { get; set; }
 
-        // Recent orders
         public List<RecentOrderDto> RecentOrders { get; set; } = new();
 
-        // Chart data
         public Dictionary<string, int> OrderStatusDistribution { get; set; } = new();
         public Dictionary<string, decimal> DailyRevenue { get; set; } = new();
     }

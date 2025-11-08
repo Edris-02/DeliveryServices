@@ -5,6 +5,5 @@ namespace DeliveryServices.Models
         public const string Admin = "Admin";
         public const string Merchant = "Merchant";
         public const string Driver = "Driver";
-        public const string Customer = "Customer";
     }
 }
