@@ -86,22 +86,13 @@
                     <!-- Salary Configuration -->
                     <h5 class="mb-3"><i class="bi bi-cash-coin"></i> Salary Configuration</h5>
                     <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label asp-for="BaseSalary" class="form-label"></label>
-                            <div class="input-group">
-                                <input asp-for="BaseSalary" class="form-control" placeholder="0.00" value="0" />
-                            </div>
-                            <span asp-validation-for="BaseSalary" class="text-danger small"></span>
-                            <small class="text-muted">Annual base salary (will be divided by 12 for monthly payment)</small>
-                        </div>
-
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label asp-for="CommissionPerDelivery" class="form-label"></label>
                             <div class="input-group">
                                 <input asp-for="CommissionPerDelivery" class="form-control" placeholder="5.00" value="5.00" />
                             </div>
                             <span asp-validation-for="CommissionPerDelivery" class="text-danger small"></span>
-                            <small class="text-muted">Extra payment per successful delivery</small>
+                            <small class="text-muted">Payment per successful delivery</small>
                         </div>
                     </div>
 

@@ -17,7 +17,7 @@ namespace DeliveryServices.Models
         public decimal Amount { get; set; }
 
         [Column(TypeName = "decimal(18,2)")]
-        public decimal BaseSalaryPortion { get; set; }
+        public decimal BonusPortion { get; set; } 
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal CommissionPortion { get; set; }

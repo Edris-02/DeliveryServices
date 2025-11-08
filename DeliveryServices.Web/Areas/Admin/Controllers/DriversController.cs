@@ -181,8 +181,8 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             var payment = new DriverSalaryPayment
             {
                 DriverId = driver.Id,
-                Amount = driver.CurrentBalance,
-                BaseSalaryPortion = driver.BaseSalary > 0 ? driver.BaseSalary / 12 : 0,
+                Amount = driver.CurrentMonthDeliveries * driver.CommissionPerDelivery,
+                BonusPortion = 0, // Bonus will be entered by admin during payment
                 CommissionPortion = driver.CurrentMonthDeliveries * driver.CommissionPerDelivery,
                 DeliveriesCount = driver.CurrentMonthDeliveries,
                 PaymentDate = now,
@@ -212,9 +212,16 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
                 ModelState.AddModelError("Amount", "Amount must be greater than zero");
             }
 
-            if (payment.Amount > driver.CurrentBalance)
+            // Validate that commission portion doesn't exceed current balance
+            if (payment.CommissionPortion > driver.CurrentBalance)
             {
-                ModelState.AddModelError("Amount", $"Amount cannot exceed current balance of {driver.CurrentBalance:N2}");
+                ModelState.AddModelError("CommissionPortion", $"Commission cannot exceed current balance of {driver.CurrentBalance:N2}");
+            }
+
+            // Validate bonus is not negative
+            if (payment.BonusPortion < 0)
+            {
+                ModelState.AddModelError("BonusPortion", "Bonus cannot be negative");
             }
 
             if (!ModelState.IsValid)
@@ -227,7 +234,7 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
             {
                 DriverId = payment.DriverId,
                 Amount = payment.Amount,
-                BaseSalaryPortion = payment.BaseSalaryPortion,
+                BonusPortion = payment.BonusPortion,
                 CommissionPortion = payment.CommissionPortion,
                 DeliveriesCount = payment.DeliveriesCount,
                 PaymentDate = payment.PaymentDate,
@@ -241,13 +248,15 @@ namespace DeliveryServices.Web.Areas.Admin.Controllers
 
             _unitOfWork.DriverSalaryPayment.Add(newPayment);
 
-            driver.CurrentBalance -= payment.Amount;
+            // Deduct only commission from current balance (bonus is extra from company)
+            driver.CurrentBalance -= payment.CommissionPortion;
+            // But add total amount (commission + bonus) to total earnings
             driver.TotalEarnings += payment.Amount;
             driver.CurrentMonthDeliveries = 0;
 
             _unitOfWork.Save();
 
-            TempData["success"] = $"Salary payment of {payment.Amount:N2} processed successfully";
+            TempData["success"] = $"Salary payment of {payment.Amount:N2} processed successfully (Commission: {payment.CommissionPortion:N2}, Bonus: {payment.BonusPortion:N2})";
             return RedirectToAction(nameof(Details), new { id = driver.Id });
         }
     }

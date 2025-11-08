@@ -39,10 +39,6 @@ namespace DeliveryServices.Models
         [Display(Name = "Vehicle Plate Number")]
         public string? VehiclePlateNumber { get; set; }
 
-        [Display(Name = "Base Salary")]
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal BaseSalary { get; set; } = 0;
-
         [Display(Name = "Commission Per Delivery")]
         [Column(TypeName = "decimal(18,2)")]
         public decimal CommissionPerDelivery { get; set; } = 5.00m; 
@@ -76,7 +72,7 @@ namespace DeliveryServices.Models
         [NotMapped]
         [Display(Name = "This Month Earnings")]
         public decimal CurrentMonthEarnings =>
-   (BaseSalary / 12) + (CurrentMonthDeliveries * CommissionPerDelivery);
+   CurrentMonthDeliveries * CommissionPerDelivery;
 
         [NotMapped]
         [Display(Name = "Average Earnings Per Delivery")]

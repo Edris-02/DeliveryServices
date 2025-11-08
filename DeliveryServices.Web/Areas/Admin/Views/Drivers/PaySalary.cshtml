@@ -92,34 +92,53 @@
                                 <div><strong class="text-primary">@Model.DeliveriesCount deliveries</strong></div>
                             </div>
                             <div class="col-md-6">
-                                <label class="text-muted small">Base Salary Portion</label>
-                                <div><strong>@Model.BaseSalaryPortion.ToString("N2")</strong></div>
-                                <small class="text-muted">(@driver?.BaseSalary.ToString("N2") / 12 months)</small>
-                            </div>
-                            <div class="col-md-6">
                                 <label class="text-muted small">Commission</label>
                                 <div><strong class="text-success">@Model.CommissionPortion.ToString("N2")</strong></div>
                                 <small class="text-muted">(@Model.DeliveriesCount × @driver?.CommissionPerDelivery.ToString("N2"))</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-muted small">Current Bonus</label>
+                                <div><strong>@Model.BonusPortion.ToString("N2")</strong></div>
                             </div>
                         </div>
                         <hr />
                         <div class="row">
                             <div class="col-md-12">
-                                <label class="text-muted small">Total Payment Amount</label>
+                                <label class="text-muted small">Calculated Payment Amount</label>
                                 <h3 class="mb-0 text-success">@Model.Amount.ToString("N2")</h3>
+                                <small class="text-muted">Commission + Bonus</small>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Bonus Field -->
+                    <div class="mb-3">
+                        <label asp-for="BonusPortion" class="form-label">
+                            Bonus Amount <span class="text-muted">(Optional)</span>
+                        </label>
+                        <div class="input-group">
+                            <input asp-for="BonusPortion" class="form-control" type="number" step="0.01" min="0" id="bonusInput" />
+                        </div>
+                        <span asp-validation-for="BonusPortion" class="text-danger small"></span>
+                        <small class="text-muted">
+                            Add a bonus amount for this payment period (e.g., performance bonus, incentive)
+                        </small>
+                    </div>
+
+                    <!-- Hidden fields for recalculation -->
+                    <input type="hidden" asp-for="CommissionPortion" id="commissionPortion" />
+                    <input type="hidden" asp-for="DeliveriesCount" />
+
                     <!-- Payment Amount -->
                     <div class="mb-3">
-                        <label asp-for="Amount" class="form-label">Payment Amount</label>
+                        <label asp-for="Amount" class="form-label">Total Payment Amount</label>
                         <div class="input-group">
-                            <input asp-for="Amount" class="form-control form-control-lg" readonly />
+                            <input asp-for="Amount" class="form-control form-control-lg" id="totalAmount" readonly />
                         </div>
                         <span asp-validation-for="Amount" class="text-danger small"></span>
                         <small class="text-muted">
-                            Maximum: @driver?.CurrentBalance.ToString("N2") (Current Balance)
+                            Commission from balance: @((driver?.CurrentMonthDeliveries * driver?.CommissionPerDelivery ?? 0).ToString("N2")) |
+                            Bonus is additional company payment
                         </small>
                     </div>
 
@@ -153,9 +172,10 @@
                     <div class="alert alert-info">
                         <h6 class="alert-heading"><i class="bi bi-info-circle"></i> What happens after payment?</h6>
                         <ul class="mb-0 small">
-                            <li>Current balance will be reduced by @Model.Amount.ToString("N2")</li>
-                            <li>Total earnings will increase by @Model.Amount.ToString("N2")</li>
+                            <li>Current balance will be reduced by commission amount: @((driver?.CurrentMonthDeliveries * driver?.CommissionPerDelivery ?? 0).ToString("N2"))</li>
+                            <li>Total earnings will increase by full payment amount (commission + bonus)</li>
                             <li>Monthly delivery counter will be reset to 0</li>
+                            <li>Bonus is additional company payment (doesn't come from driver's balance)</li>
                             <li>Payment record will be saved in history</li>
                         </ul>
                     </div>
@@ -176,4 +196,17 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function() {
+            // Auto-calculate total amount when bonus changes
+   $('#bonusInput').on('input', function() {
+                var bonus = parseFloat($(this).val()) || 0;
+                var commission = parseFloat($('#commissionPortion').val()) || 0;
+                var total = bonus + commission;
+          
+    $('#totalAmount').val(total.toFixed(2));
+          });
+   });
+    </script>
 }

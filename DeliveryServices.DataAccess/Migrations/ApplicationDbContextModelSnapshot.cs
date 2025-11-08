@@ -110,9 +110,6 @@ namespace DeliveryServices.DataAccess.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<decimal>("BaseSalary")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("CommissionPerDelivery")
                         .HasColumnType("decimal(18,2)");
 
@@ -184,7 +181,7 @@ namespace DeliveryServices.DataAccess.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("BaseSalaryPortion")
+                    b.Property<decimal>("BonusPortion")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("CommissionPortion")
