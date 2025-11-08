@@ -109,15 +109,17 @@ namespace DeliveryServices.Web.Areas.Merchant.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var merchant = _unitOfWork.Merchant.Get(m => m.Id == user.MerchantId.Value);
+            var merchant = _unitOfWork.Merchant.Get(
+  m => m.Id == user.MerchantId.Value,
+       includeProperties: "Orders,Payouts");
 
-            if (merchant == null)
-            {
-                return RedirectToAction(nameof(Index));
+     if (merchant == null)
+          {
+  return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.User = user;
-            return View(merchant);
+       ViewBag.User = user;
+    return View(merchant);
         }
     }
 }
