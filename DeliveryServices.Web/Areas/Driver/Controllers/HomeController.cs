@@ -90,36 +90,61 @@ var order = _unitOfWork.Order.Get(
  public async Task<IActionResult> UpdateDeliveryStatus(int orderId, OrderStatus newStatus)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId!);
+      var user = await _userManager.FindByIdAsync(userId!);
 
-            var order = _unitOfWork.Order.Get(
-           o => o.Id == orderId && o.DriverId == user!.DriverId,
-                tracked: true);
+    var order = _unitOfWork.Order.Get(
+        o => o.Id == orderId && o.DriverId == user!.DriverId,
+    includeProperties: "Items,Merchant,Driver",
+    tracked: true);
 
-            if (order == null)
+  if (order == null)
             {
      TempData["error"] = "Order not found or access denied.";
-          return RedirectToAction(nameof(Deliveries));
+       return RedirectToAction(nameof(Deliveries));
      }
 
-            // Validate status transition
-            if (!IsValidStatusTransition(order.Status, newStatus))
-            {
-          TempData["error"] = "Invalid status transition.";
+       // Validate status transition
+        if (!IsValidStatusTransition(order.Status, newStatus))
+  {
+        TempData["error"] = "Invalid status transition.";
       return RedirectToAction(nameof(DeliveryDetails), new { id = orderId });
  }
 
   var oldStatus = order.Status;
             order.Status = newStatus;
 
- // Update delivery timestamp if delivered
-    if (newStatus == OrderStatus.Delivered)
+ // Update delivery timestamp and driver payment if delivered
+    if (newStatus == OrderStatus.Delivered && oldStatus != OrderStatus.Delivered)
             {
    order.DeliveredAt = DateTime.UtcNow;
+  
+  // Update driver earnings and statistics
+          if (order.Driver != null)
+      {
+     // Increment delivery counters
+  order.Driver.TotalDeliveries++;
+       order.Driver.CurrentMonthDeliveries++;
+    
+            // Add commission to current balance
+       order.Driver.CurrentBalance += order.Driver.CommissionPerDelivery;
+       
+   // Update merchant balance (add the order subtotal to their current balance)
+    if (order.MerchantId.HasValue)
+   {
+      var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+       if (merchant != null)
+          {
+         merchant.CurrentBalance += order.SubTotal;
+        _unitOfWork.Merchant.Update(merchant);
+            }
+              }
+  
+        _unitOfWork.Driver.Update(order.Driver);
+      }
      }
 
-            _unitOfWork.Order.Update(order);
-            _unitOfWork.Save();
+     _unitOfWork.Order.Update(order);
+   _unitOfWork.Save();
 
      TempData["success"] = $"Order status updated from {oldStatus} to {newStatus}";
      return RedirectToAction(nameof(DeliveryDetails), new { id = orderId });
