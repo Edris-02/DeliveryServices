@@ -162,7 +162,20 @@ background: rgba(255, 255, 255, 0.03);
         }
         
     .app-content { flex: 1 1 auto; min-width: 0; }
-        .content-scroll { height: calc(100vh - 56px); overflow: auto; }
+     .content-scroll { 
+            height: calc(100vh - 56px); 
+ overflow: auto; 
+   display: flex; 
+     flex-direction: column; 
+        }
+        
+    .content-scroll > .container-fluid {
+       flex: 1 0 auto;
+        }
+
+        .content-scroll footer {
+          flex-shrink: 0;
+        }
 
         @@media (max-width: 991.98px) {
      .app-sidebar { 
@@ -284,8 +297,13 @@ href="@Url.Action("Payments","Home", new { area = "Driver" })">
        <div class="container-fluid py-4">
     @RenderSection("PageHeader", required: false)
             @RenderBody()
-            </div>
     </div>
+    <footer class="mt-auto py-3 border-top bg-body">
+    <div class="container-fluid small text-secondary">
+    Built with <a href="https://getbootstrap.com" class="link-secondary" target="_blank" rel="noopener">Bootstrap 5</a>
+         </div>
+    </footer>
+</div>
         </div>
     </div>
 

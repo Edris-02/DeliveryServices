@@ -259,6 +259,16 @@
         .content-scroll {
             height: calc(100vh - 56px);
             overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content-scroll > .container-fluid {
+            flex: 1 0 auto;
+        }
+
+        .content-scroll footer {
+            flex-shrink: 0;
         }
 
         /* Sidebar collapse for mobile */
