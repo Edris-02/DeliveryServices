@@ -312,44 +312,29 @@
             place-items: center;
         }
 
+        /* Form Enhancements */
+        .form-control,
+        .form-select,
+        .input-group input,
+  .input-group-text {
+            box-shadow: none;
+     }
+
+     .form-control:focus,
+        .form-select:focus,
+        .input-group input:focus {
+            border-color: #2563eb;
+      box-shadow: none;
+  outline: none;
+        }
+
         /* Toast positioning */
         .toast-container {
-            position: fixed;
+ position: fixed;
             top: 1rem;
-            right: 1rem;
-            z-index: 1090;
-        }
-
-        /* Dropdown menu styling */
-        .sidebar-footer .dropdown-menu {
-            margin-bottom: 0.5rem !important;
-            border: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .sidebar-footer .dropdown-menu-dark {
-            background: #2a2d3a;
-        }
-
-        .sidebar-footer .dropdown-menu-dark .dropdown-item {
-            color: var(--sidebar-text);
-            padding: 0.65rem 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .sidebar-footer .dropdown-menu-dark .dropdown-item:hover {
-            background: var(--sidebar-active-bg);
-            color: var(--sidebar-active);
-        }
-
-        .sidebar-footer .dropdown-menu-dark .dropdown-item.text-danger:hover {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-        }
-
-        .sidebar-footer .dropdown-menu-dark .dropdown-divider {
-            border-color: rgba(255, 255, 255, 0.1);
-        }
+   right: 1rem;
+  z-index: 1090;
+ }
     </style>
     @RenderSection("Styles", required: false)
 </head>
