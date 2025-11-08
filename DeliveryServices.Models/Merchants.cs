@@ -16,7 +16,7 @@ namespace DeliveryServices.Models
         public string Name { get; set; }
 
         [StringLength(100)]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [Required(ErrorMessage = "Phone number is required.")]
         [Phone]
