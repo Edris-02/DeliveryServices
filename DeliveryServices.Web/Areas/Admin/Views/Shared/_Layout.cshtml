@@ -328,6 +328,48 @@
                 outline: none;
             }
 
+        /* Table Enhancements */
+        .table thead th {
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem 0.75rem;
+        }
+
+        .table tbody td {
+            padding: 1rem 0.75rem;
+            vertical-align: middle;
+        }
+
+        .table-responsive {
+            border-radius: 0;
+        }
+
+        /* Card improvements */
+        .card {
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Badge improvements */
+        .badge {
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+        }
+
+        /* Button group improvements */
+        .btn-group-sm > .btn {
+            padding: 0.375rem 0.75rem;
+        }
+
         /* Toast positioning */
         .toast-container {
             position: fixed;
@@ -497,10 +539,6 @@
                     <div class="ms-auto d-flex align-items-center gap-2">
                         <button id="themeToggle" class="btn btn-outline-secondary" type="button" title="Toggle theme">
                             <i class="bi bi-moon-stars"></i>
-                        </button>
-                        <button class="btn btn-outline-secondary position-relative" type="button" title="Notifications">
-                            <i class="bi bi-bell"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">3</span>
                         </button>
                         <div class="dropdown">
                             <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" data-bs-toggle="dropdown">

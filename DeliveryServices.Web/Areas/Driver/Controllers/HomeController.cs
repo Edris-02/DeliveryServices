@@ -108,17 +108,33 @@ namespace DeliveryServices.Web.Areas.Driver.Controllers
             var oldStatus = order.Status;
             order.Status = newStatus;
 
-            if (newStatus == OrderStatus.Delivered && oldStatus != OrderStatus.Delivered)
+            // Update order item statuses based on the new order status
+            if (newStatus == OrderStatus.Delivered)
             {
                 order.DeliveredAt = DateTime.UtcNow;
 
-                if (order.Driver != null)
+                // Mark all items as delivered
+                foreach (var item in order.Items)
+                {
+                    if (item.Status != OrderItemStatus.Delivered)
+                    {
+                        var trackedItem = _unitOfWork.OrderItem.Get(i => i.Id == item.Id, tracked: true);
+                        if (trackedItem != null)
+                        {
+                            trackedItem.Status = OrderItemStatus.Delivered;
+                            _unitOfWork.OrderItem.Update(trackedItem);
+                        }
+                    }
+                }
+
+                // Update driver stats only if status is changing to delivered
+                if (oldStatus != OrderStatus.Delivered && order.Driver != null)
                 {
                     order.Driver.TotalDeliveries++;
                     order.Driver.CurrentMonthDeliveries++;
-
                     order.Driver.CurrentBalance += order.Driver.CommissionPerDelivery;
 
+                    // Update merchant balance
                     if (order.MerchantId.HasValue)
                     {
                         var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
@@ -131,6 +147,50 @@ namespace DeliveryServices.Web.Areas.Driver.Controllers
 
                     _unitOfWork.Driver.Update(order.Driver);
                 }
+            }
+            else if (newStatus == OrderStatus.Cancelled)
+            {
+                // Mark all items as cancelled
+                foreach (var item in order.Items)
+                {
+                    if (item.Status != OrderItemStatus.Cancelled)
+                    {
+                        var trackedItem = _unitOfWork.OrderItem.Get(i => i.Id == item.Id, tracked: true);
+                        if (trackedItem != null)
+                        {
+                            trackedItem.Status = OrderItemStatus.Cancelled;
+                            _unitOfWork.OrderItem.Update(trackedItem);
+                        }
+                    }
+                }
+
+                // Revert driver stats if order was previously delivered
+                if (oldStatus == OrderStatus.Delivered && order.Driver != null)
+                {
+                    if (order.Driver.TotalDeliveries > 0)
+                        order.Driver.TotalDeliveries--;
+                    if (order.Driver.CurrentMonthDeliveries > 0)
+                        order.Driver.CurrentMonthDeliveries--;
+                    order.Driver.CurrentBalance -= order.Driver.CommissionPerDelivery;
+
+                    // Revert merchant balance
+                    if (order.MerchantId.HasValue)
+                    {
+                        var merchant = _unitOfWork.Merchant.Get(m => m.Id == order.MerchantId.Value, tracked: true);
+                        if (merchant != null)
+                        {
+                            merchant.CurrentBalance -= order.SubTotal;
+                            _unitOfWork.Merchant.Update(merchant);
+                        }
+                    }
+
+                    _unitOfWork.Driver.Update(order.Driver);
+                }
+            }
+            else if (newStatus == OrderStatus.PickedUp)
+            {
+                // When picked up, items remain in their current status (typically Pending)
+                // No item status changes needed for PickedUp
             }
 
             _unitOfWork.Order.Update(order);
